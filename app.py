@@ -40,7 +40,7 @@ title = "Umamusume voice synthesizer \n 赛马娘语音合成器"
 description = """
 This synthesizer is created based on VITS (https://arxiv.org/abs/2106.06103) model, trained on voice data extracted from mobile game <Umamusume Pretty Derby>\n
 这个合成器是基于VITS文本到语音模型，在从手游《賽馬娘：Pretty Derby》解包的语音数据上训练得到。
-<img src="https://huggingface.co/spaces/Plachta/uma_voice/blob/main/small_202201136190132.jpg">
+<img src="./small_202201136190132.jpg">
 """
 article = """
 If your input language is not Japanese, it will be translated to Japanese by Google translator, but accuracy is not guaranteed.\n
@@ -88,9 +88,9 @@ char_dropdown = gr.Dropdown(['0:特别周','1:无声铃鹿','2:东海帝王','3:
                             '80:真弓快车','81:骏川手纲','82:凯斯奇迹','83:小林历奇',
                             '84:北港火山','85:奇锐骏','86:秋川理事长'])
 language_dropdown = gr.Dropdown(['日本語','简体中文','English'])
-examples = [['このデモを使用していただきありがとうございます!', '2:东海帝王', '日本語'],
+examples = [['このデモを使用していただき，ありがとうございます!', '2:东海帝王', '日本語'],
             ['トレーナーさん，今日は何お食べます？', '0:特别周', '日本語'],
-            ['おにいさまは，ライスのこと，好きですか，それども嫌い？', '29:米浴','日本語'],
+            ['おにいさまは，ライスのこと，好きですか？それども嫌い？', '29:米浴','日本語'],
             ['トレーナーさんは，本当に優しい人ですね。', '24:曼城茶座','日本語']]
 gr.Interface(fn=infer, inputs=[textbox, char_dropdown, language_dropdown], outputs=["text","audio"],
             title=title, description=description, article=article, examples = examples).launch()
