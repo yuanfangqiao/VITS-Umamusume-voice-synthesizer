@@ -56,9 +56,9 @@ def infer(text, character, language):
     char_id = int(character.split(':')[0])
     stn_tst = get_text(text, hps)
     with torch.no_grad():
-        x_tst = stn_tst.cuda().unsqueeze(0)
-        x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cuda()
-        sid = torch.LongTensor([char_id]).cuda()
+        x_tst = stn_tst.unsqueeze(0)
+        x_tst_lengths = torch.LongTensor([stn_tst.size(0)])
+        sid = torch.LongTensor([char_id])
         audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=.667, noise_scale_w=0.8, length_scale=1)[0][0,0].data.cpu().float().numpy()
     return (text,(22050, audio))
 
