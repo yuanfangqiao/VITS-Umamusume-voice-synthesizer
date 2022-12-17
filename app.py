@@ -88,6 +88,9 @@ char_dropdown = gr.Dropdown(['0:特别周','1:无声铃鹿','2:东海帝王','3:
                             '80:真弓快车','81:骏川手纲','82:凯斯奇迹','83:小林历奇',
                             '84:北港火山','85:奇锐骏','86:秋川理事长'])
 language_dropdown = gr.Dropdown(['日本語','简体中文','English'])
-
+examples = ['このデモを使用していただきありがとうございます。',
+            'お疲れ様です，トレーナーさん。',
+            '今日は何お食べますか？',
+            'トレーナーさんは，本当に優しい人ですね。']
 gr.Interface(fn=infer, inputs=[textbox, char_dropdown, language_dropdown], outputs=["text","audio"],
-            title=title, description=description, article=article).launch()
+            title=title, description=description, article=article, examples = examples).launch()
