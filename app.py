@@ -53,9 +53,9 @@ def infer(text, character, language):
     if language == '日本語':
         pass
     elif language == '简体中文':
-        text = ts.google(text, from_language='zh', to_language-'ja')
+        text = ts.google(text, from_language='zh', to_language='ja')
     elif language == 'English':
-        text = ts.google(text, from_language='en', to_language-'ja')
+        text = ts.google(text, from_language='en', to_language='ja')
     char_id = int(character.split(':')[0])
     stn_tst = get_text(text, hps)
     with torch.no_grad():
