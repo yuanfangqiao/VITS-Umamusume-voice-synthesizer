@@ -40,7 +40,6 @@ title = "Umamusume voice synthesizer \n 赛马娘语音合成器"
 description = """
 This synthesizer is created based on VITS (https://arxiv.org/abs/2106.06103) model, trained on voice data extracted from mobile game <Umamusume Pretty Derby>\n
 这个合成器是基于VITS文本到语音模型，在从手游《賽馬娘：Pretty Derby》解包的语音数据上训练得到。
-<img src="./small_202201136190132.jpg">
 """
 article = """
 If your input language is not Japanese, it will be translated to Japanese by Google translator, but accuracy is not guaranteed.\n
