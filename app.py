@@ -5,7 +5,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-import translators as ts
+import translators.server as tss
 
 import commons
 import utils
@@ -50,9 +50,9 @@ def infer(text, character, language):
     if language == '日本語':
         pass
     elif language == '简体中文':
-        text = ts.google(text, from_language='zh', to_language='ja')
+        text = tss.google(text, from_language='zh', to_language='ja')
     elif language == 'English':
-        text = ts.google(text, from_language='en', to_language='ja')
+        text = tss.google(text, from_language='en', to_language='ja')
     char_id = int(character.split(':')[0])
     stn_tst = get_text(text, hps)
     with torch.no_grad():
