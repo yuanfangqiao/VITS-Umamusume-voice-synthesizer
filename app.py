@@ -34,7 +34,7 @@ net_g = SynthesizerTrn(
     **hps.model)
 _ = net_g.eval()
 
-_ = utils.load_checkpoint("pretrained_models/uma87_639000.pth", net_g, None)
+_ = utils.load_checkpoint("pretrained_models/uma87_817000.pth", net_g, None)
 
 title = "Umamusume voice synthesizer \n 赛马娘语音合成器"
 description = """
@@ -87,7 +87,7 @@ char_dropdown = gr.Dropdown(['0:特别周','1:无声铃鹿','2:东海帝王','3:
                             '80:真弓快车','81:骏川手纲','82:凯斯奇迹','83:小林历奇',
                             '84:北港火山','85:奇锐骏','86:秋川理事长'])
 language_dropdown = gr.Dropdown(['日本語','简体中文','English'])
-examples = [['このデモを使用していただき，ありがとうございます!', '12:目白麦昆', '日本語'],
+examples = [['このデモを使用していただき，ありがとうございます!', '10:草上飞', '日本語'],
             ['トレーナーさん，今日はなにお食べます？', '2:东海帝王', '日本語'],
             ['おにいさまは，ライスのこと，好きですか，それども嫌い？', '29:米浴','日本語'],
             ['トレーナーさんは，本当に優しい人ですね。', '24:曼城茶座','日本語']]
