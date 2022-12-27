@@ -34,7 +34,7 @@ net_g = SynthesizerTrn(
     **hps.model)
 _ = net_g.eval()
 
-_ = utils.load_checkpoint("pretrained_models/uma87_817000.pth", net_g, None)
+_ = utils.load_checkpoint("pretrained_models/G_1153000.pth", net_g, None)
 
 title = "Umamusume voice synthesizer \n 赛马娘语音合成器"
 description = """
