@@ -62,7 +62,7 @@ def infer(text, character, language):
     return (text,(22050, audio))
 
 # We instantiate the Textbox class
-textbox = gr.Textbox(label="Type your sentence here:", placeholder="お疲れ様です，トレーナーさん。", lines=2)
+textbox = gr.Textbox(label="Text", placeholder="Type your sentence here", lines=2)
 # select character
 char_dropdown = gr.Dropdown(['0:特别周','1:无声铃鹿','2:东海帝王','3:丸善斯基',
                             '4:富士奇迹','5:小栗帽','6:黄金船','7:伏特加',
@@ -87,9 +87,11 @@ char_dropdown = gr.Dropdown(['0:特别周','1:无声铃鹿','2:东海帝王','3:
                             '80:真弓快车','81:骏川手纲','82:凯斯奇迹','83:小林历奇',
                             '84:北港火山','85:奇锐骏','86:秋川理事长'])
 language_dropdown = gr.Dropdown(['日本語','简体中文','English'])
-examples = [['このデモを使用していただき，ありがとうございます!', '10:草上飞', '日本語'],
-            ['トレーナーさん，今日はなにお食べます？', '2:东海帝王', '日本語'],
-            ['おにいさまは，ライスのこと，好きですか，それども嫌い？', '29:米浴','日本語'],
-            ['トレーナーさんは，本当に優しい人ですね。', '24:曼城茶座','日本語']]
+examples = [['お疲れ様です，トレーナーさん。', '1:无声铃鹿', '日本語'],
+            ['張り切っていこう！', '67:北部玄驹', '日本語'],
+            ['何でこんなに慣れでんのよ，私のほが先に好きだっだのに。', '10:草上飞','日本語'],
+            ['授業中に出しだら，学校生活終わるですわ。', '12:目白麦昆','日本語']
+            ['お帰りなさい，お兄様！', '29:米浴','日本語']
+            ['私の処女をもらっでください！', '29:米浴','日本語']]
 gr.Interface(fn=infer, inputs=[textbox, char_dropdown, language_dropdown], outputs=["text","audio"],
             title=title, description=description, article=article, examples = examples).launch()
