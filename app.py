@@ -90,8 +90,8 @@ language_dropdown = gr.Dropdown(['日本語','简体中文','English'])
 examples = [['お疲れ様です，トレーナーさん。', '1:无声铃鹿', '日本語'],
             ['張り切っていこう！', '67:北部玄驹', '日本語'],
             ['何でこんなに慣れでんのよ，私のほが先に好きだっだのに。', '10:草上飞','日本語'],
-            ['授業中に出しだら，学校生活終わるですわ。', '12:目白麦昆','日本語']
-            ['お帰りなさい，お兄様！', '29:米浴','日本語']
+            ['授業中に出しだら，学校生活終わるですわ。', '12:目白麦昆','日本語'],
+            ['お帰りなさい，お兄様！', '29:米浴','日本語'],
             ['私の処女をもらっでください！', '29:米浴','日本語']]
 gr.Interface(fn=infer, inputs=[textbox, char_dropdown, language_dropdown], outputs=["text","audio"],
             title=title, description=description, article=article, examples = examples).launch()
