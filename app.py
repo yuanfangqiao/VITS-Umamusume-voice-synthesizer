@@ -1,21 +1,13 @@
-import os
-import json
-import math
+import gradio as gr
 import torch
-import sys
-from torch import nn
-from torch.nn import functional as F
-from torch.utils.data import DataLoader
-import translators.server as tss
 import commons
 import utils
-from data_utils import TextAudioLoader, TextAudioCollate, TextAudioSpeakerLoader, TextAudioSpeakerCollate
 from models import SynthesizerTrn
 from text.symbols import symbols
 from text import text_to_sequence
-import gradio as gr
+import numpy as np
+import translators.server as tss
 
-from scipy.io.wavfile import write
 from torch.utils import mkldnn
  
 mkldnn.enabled = False
