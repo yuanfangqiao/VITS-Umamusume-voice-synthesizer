@@ -42,7 +42,7 @@ This synthesizer is created based on VITS (https://arxiv.org/abs/2106.06103) mod
 这个合成器是基于VITS文本到语音模型，在从手游《賽馬娘：Pretty Derby》解包的语音数据上训练得到。\n
 If your input language is not Japanese, it will be translated to Japanese by Google translator, but accuracy is not guaranteed.\n
 如果您的输入语言不是日语，则会由谷歌翻译自动翻译为日语，但是准确性不能保证。\n\n
-若使用人数太多可能会出现排队过久的情况，若有需要可选择本地部署
+若使用人数太多可能会出现排队过久的情况，若有需要可选择本地部署\n\n
 为了避免内存不足导致环境崩掉，建议不要输入太长的段落。
 """
 article = """
