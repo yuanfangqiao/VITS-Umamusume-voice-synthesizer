@@ -6,6 +6,7 @@ from models import SynthesizerTrn
 from text.symbols import symbols
 from text import text_to_sequence
 import numpy as np
+import os
 import translators.server as tss
 
 from torch.utils import mkldnn
