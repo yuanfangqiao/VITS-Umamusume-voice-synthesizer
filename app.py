@@ -30,7 +30,7 @@ net_g = SynthesizerTrn(
     hps.data.filter_length // 2 + 1,
     hps.train.segment_size // hps.data.hop_length,
     n_speakers=hps.data.n_speakers,
-    **hps.model).half()
+    **hps.model)
 _ = net_g.eval()
 
 _ = utils.load_checkpoint("pretrained_models/G_1153000.pth", net_g, None)
