@@ -43,7 +43,6 @@ This synthesizer is created based on VITS (https://arxiv.org/abs/2106.06103) mod
 If your input language is not Japanese, it will be translated to Japanese by Google translator, but accuracy is not guaranteed.\n
 如果您的输入语言不是日语，则会由谷歌翻译自动翻译为日语，但是准确性不能保证。\n\n
 若使用人数太多可能会出现排队过久的情况，若有需要可选择本地部署\n\n
-为了避免内存不足导致环境崩掉，建议不要输入太长的段落。
 """
 article = """
 
@@ -51,8 +50,6 @@ article = """
 
 
 def infer(text, character, language, duration, noise_scale, noise_scale_w):
-    if len(text)>1000:
-        text = text[:1000]
     if language == '日本語':
         pass
     elif language == '简体中文':
@@ -69,7 +66,7 @@ def infer(text, character, language, duration, noise_scale, noise_scale_w):
     return (text,(22050, audio))
 
 # We instantiate the Textbox class
-textbox = gr.Textbox(label="Text", placeholder="Type your sentence here (maximum 1000 characters)", lines=2)
+textbox = gr.Textbox(label="Text", placeholder="Type your sentence here", lines=2)
 # select character
 char_dropdown = gr.Dropdown(['0:特别周','1:无声铃鹿','2:东海帝王','3:丸善斯基',
                             '4:富士奇迹','5:小栗帽','6:黄金船','7:伏特加',
