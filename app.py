@@ -29,16 +29,17 @@ _ = utils.load_checkpoint("pretrained_models/G_1153000.pth", net_g, None)
 
 title = "Umamusume voice synthesizer \n 赛马娘语音合成器"
 description = """
-This synthesizer is created based on VITS (https://arxiv.org/abs/2106.06103) model, trained on voice data extracted from mobile game Umamusume Pretty Derby\n
+This synthesizer is created based on [VITS][paper] model, trained on voice data extracted from mobile game Umamusume Pretty Derby\n
 这个合成器是基于VITS文本到语音模型，在从手游《賽馬娘：Pretty Derby》解包的语音数据上训练得到。\n
-Link to introduction video  模型介绍视频链接：\n
-https://www.bilibili.com/video/BV1T84y1e7p5/?vd_source=6d5c00c796eff1cbbe25f1ae722c2f9f#reply607277701\n
+[introduction video][video]  [模型介绍视频][video]\n
 Due to some unknown reason, VITS inference on CPU results in accumulative memory leakage, resulting in Runtime error：Memory limit exceeded.\n
 In case of space crash, you may duplicate this space to run it privately and without any queue.\n
 由于未知原因，VITS模型在CPU上执行推理时会有逐步累积的内存泄漏，最终导致空间报错Runtime error：Memory limit exceeded，目前正在排查。\n
 以防该空间崩溃，您可以复制该空间至私人空间运行。\n
 If your input language is not Japanese, it will be translated to Japanese by Google translator, but accuracy is not guaranteed.\n
 如果您的输入语言不是日语，则会由谷歌翻译自动翻译为日语，但是准确性不能保证。\n\n
+[video]: https://www.bilibili.com/video/BV1T84y1e7p5/?vd_source=6d5c00c796eff1cbbe25f1ae722c2f9f#reply607277701
+[paper]: https://arxiv.org/abs/2106.06103
 """
 article = """
 
