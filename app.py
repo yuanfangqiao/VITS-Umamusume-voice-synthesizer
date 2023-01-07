@@ -105,6 +105,5 @@ gr.Interface(fn=infer, inputs=[
     language_dropdown, 
     duration_slider,
     noise_scale_slider, 
-    noise_scale_w_slider,
-], outputs=["text","audio"],
+    noise_scale_w_slider], outputs=["text","audio"],
             title=title, description=description, article=article, examples = examples).launch()
