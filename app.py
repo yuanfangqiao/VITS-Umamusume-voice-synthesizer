@@ -107,5 +107,5 @@ gr.Interface(fn=infer, inputs=[textbox,
                                language_dropdown, 
                                gr.Number(value=1, label='时长 Duration'), 
                                gr.Number(value=0.667, label='噪声比例 noise_scale'), 
-                               gr.Number(value=0.8, label='噪声偏差 noise_scale_w')], outputs=["text","audio"],
+                               gr.Number(value=0.8, label='噪声偏差 noise_scale_w'),], outputs=["text","audio"],
             title=title, description=description, article=article, examples=examples).launch()
