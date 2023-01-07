@@ -6,7 +6,6 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 import translators.server as tss
-
 import commons
 import utils
 from data_utils import TextAudioLoader, TextAudioCollate, TextAudioSpeakerLoader, TextAudioSpeakerCollate
