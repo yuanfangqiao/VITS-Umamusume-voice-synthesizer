@@ -102,4 +102,5 @@ duration_slider = gr.Slider(minimum=0.1, maximum=5, value=1, step=0.1, label='�
 noise_scale_slider = gr.Slider(minimum=0.1, maximum=5, value=0.667, step=0.001, label='噪声比例 noise_scale')
 noise_scale_w_slider = gr.Slider(minimum=0.1, maximum=5, value=0.8, step=0.1, label='噪声偏差 noise_scale_w')
 
+
 gr.Interface(fn=infer, inputs=[textbox, char_dropdown, language_dropdown, duration_slider, noise_scale_slider, noise_scale_w_slider,], outputs=["text","audio"],title=title, description=description, article=article, examples=examples).launch()
