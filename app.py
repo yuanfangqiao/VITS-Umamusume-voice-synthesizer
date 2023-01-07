@@ -102,4 +102,7 @@ noise_scale_w_slider = gr.Slider(minimum=0.1, maximum=5, value=0.8, step=0.1, la
 app = gr.Interface(fn=infer, inputs=[textbox, char_dropdown, language_dropdown, duration_slider, noise_scale_slider, noise_scale_w_slider,], outputs=["text","audio"],title=title, description=description, article=article, examples=examples)
 
 if __name__=="__main__":
-    app.queue(concurrency_count=3).launch(show_api=False)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--share", action="store_true", default=False, help="share gradio app")
+    args = parser.parse_args()
+    app.queue(concurrency_count=3).launch(show_api=False, share=args.share)
