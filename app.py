@@ -17,6 +17,7 @@ from text import text_to_sequence
 import gradio as gr
 
 from scipy.io.wavfile import write
+LRU_CACHE_CAPACITY = 1
 
 
 def get_text(text, hps):
