@@ -49,7 +49,7 @@ article = """
 """
 
 
-def infer(text, character, language, duration, noise_scale, noise_scale_w):
+def infer(text, character, language):
     if language == '日本語':
         pass
     elif language == '简体中文':
@@ -62,7 +62,7 @@ def infer(text, character, language, duration, noise_scale, noise_scale_w):
         x_tst = stn_tst.unsqueeze(0)
         x_tst_lengths = torch.LongTensor([stn_tst.size(0)])
         sid = torch.LongTensor([char_id])
-        audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale, noise_scale_w=noise_scale_w, length_scale=duration)[0][0,0].data.cpu().float().numpy()
+        audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=0.667, noise_scale_w=0.8, length_scale=1)[0][0,0].data.cpu().float().numpy()
     return (text,(22050, audio))
 
 # We instantiate the Textbox class
@@ -102,4 +102,4 @@ duration_slider = gr.Slider(minimum=0.1, maximum=5, value=1, step=0.1, label='�
 noise_scale_slider = gr.Slider(minimum=0.1, maximum=5, value=0.667, step=0.001, label='噪声比例 noise_scale')
 noise_scale_w_slider = gr.Slider(minimum=0.1, maximum=5, value=0.8, step=0.1, label='噪声偏差 noise_scale_w')
 
-gr.Interface(fn=infer, inputs=[textbox, char_dropdown, language_dropdown, duration_slider, noise_scale_slider, noise_scale_w_slider,], outputs=["text","audio"],title=title, description=description, article=article, examples=examples).launch()
+gr.Interface(fn=infer, inputs=[textbox, char_dropdown, language_dropdown], outputs=["text","audio"],title=title, description=description, article=article, examples=examples).launch()
