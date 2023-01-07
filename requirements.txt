@@ -13,3 +13,4 @@ cn2an
 pypinyin
 pyopenjtalk
 translators
+gradio
