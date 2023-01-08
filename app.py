@@ -3,6 +3,7 @@ import gradio as gr
 import torch
 import commons
 import utils
+import re
 from models import SynthesizerTrn
 from text.symbols import symbols
 from text import text_to_sequence
@@ -10,6 +11,8 @@ import numpy as np
 import os
 import translators.server as tss
 import psutil
+limitation = os.getenv("SYSTEM") == "spaces"  # limit text and audio length in huggingface spaces
+max_len = 150
 def show_memory_info(hint):
     pid = os.getpid()
     p = psutil.Process(pid)
@@ -38,6 +41,11 @@ _ = net_g.eval()
 _ = utils.load_checkpoint("pretrained_models/G_1153000.pth", net_g, None)
 
 def infer(text, character, language, duration, noise_scale, noise_scale_w):
+    # check text length
+    if limitation:
+        text_len = len(re.sub("\[([A-Z]{2})\]", "", text))
+        if text_len > max_len:
+            return "Error: Text is too long", None
     show_memory_info("infer调用前")
     if language == '日本語':
         pass
@@ -78,7 +86,7 @@ if __name__ == "__main__":
         with gr.Row():
             with gr.Column():
                 # We instantiate the Textbox class
-                textbox = gr.Textbox(label="Text", placeholder="Type your sentence here", lines=2)
+                textbox = gr.Textbox(label="Text", placeholder="Type your sentence here (Maximum 150 words)", lines=2)
                 # select character
                 char_dropdown = gr.Dropdown(choices=['0:特别周', '1:无声铃鹿', '2:东海帝王', '3:丸善斯基',
                                               '4:富士奇迹', '5:小栗帽', '6:黄金船', '7:伏特加',
