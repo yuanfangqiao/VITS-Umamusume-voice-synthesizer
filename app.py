@@ -9,7 +9,6 @@ from text import text_to_sequence
 import numpy as np
 import os
 import translators.server as tss
-
 def get_text(text, hps):
     text_norm = text_to_sequence(text, hps.data.text_cleaners)
     if hps.data.add_blank:
