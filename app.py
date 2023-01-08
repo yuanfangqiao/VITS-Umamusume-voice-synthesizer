@@ -9,6 +9,7 @@ from text import text_to_sequence
 import numpy as np
 import os
 import translators.server as tss
+import psutil
 def show_memory_info(hint):
     pid = os.getpid()
     p = psutil.Process(pid)
