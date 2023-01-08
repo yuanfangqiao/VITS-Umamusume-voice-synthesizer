@@ -13,7 +13,29 @@ import translators.server as tss
 import psutil
 limitation = os.getenv("SYSTEM") == "spaces"  # limit text and audio length in huggingface spaces
 max_len = 150
-
+languages = ['日本語', '简体中文', 'English']
+characters = ['0:特别周', '1:无声铃鹿', '2:东海帝王', '3:丸善斯基',
+              '4:富士奇迹', '5:小栗帽', '6:黄金船', '7:伏特加',
+              '8:大和赤骥', '9:大树快车', '10:草上飞', '11:菱亚马逊',
+              '12:目白麦昆', '13:神鹰', '14:好歌剧', '15:成田白仁',
+              '16:鲁道夫象征', '17:气槽', '18:爱丽数码', '19:青云天空',
+              '20:玉藻十字', '21:美妙姿势', '22:琵琶晨光', '23:重炮',
+              '24:曼城茶座', '25:美普波旁', '26:目白雷恩', '27:菱曙',
+              '28:雪之美人', '29:米浴', '30:艾尼斯风神', '31:爱丽速子',
+              '32:爱慕织姬', '33:稻荷一', '34:胜利奖券', '35:空中神宫',
+              '36:荣进闪耀', '37:真机伶', '38:川上公主', '39:黄金城市',
+              '40:樱花进王', '41:采珠', '42:新光风', '43:东商变革',
+              '44:超级小溪', '45:醒目飞鹰', '46:荒漠英雄', '47:东瀛佐敦',
+              '48:中山庆典', '49:成田大进', '50:西野花', '51:春乌拉拉',
+              '52:青竹回忆', '53:微光飞驹', '54:美丽周日', '55:待兼福来',
+              '56:Mr.C.B', '57:名将怒涛', '58:目白多伯', '59:优秀素质',
+              '60:帝王光环', '61:待兼诗歌剧', '62:生野狄杜斯', '63:目白善信',
+              '64:大拓太阳神', '65:双涡轮', '66:里见光钻', '67:北部玄驹',
+              '68:樱花千代王', '69:天狼星象征', '70:目白阿尔丹', '71:八重无敌',
+              '72:鹤丸刚志', '73:目白光明', '74:樱花桂冠', '75:成田路',
+              '76:也文摄辉', '77:吉兆', '78:谷野美酒', '79:第一红宝石',
+              '80:真弓快车', '81:骏川手纲', '82:凯斯奇迹', '83:小林历奇',
+              '84:北港火山', '85:奇锐骏', '86:秋川理事长']
 def show_memory_info(hint):
     pid = os.getpid()
     p = psutil.Process(pid)
@@ -42,11 +64,18 @@ _ = net_g.eval()
 _ = utils.load_checkpoint("pretrained_models/G_1153000.pth", net_g, None)
 
 def infer(text, character, language, duration, noise_scale, noise_scale_w):
+    # check character & duraction parameter
+    if language not in languages:
+        return "Error: No such language", None
+    if character not in characters:
+        return "Error: No such character", None
     # check text length
     if limitation:
         text_len = len(re.sub("\[([A-Z]{2})\]", "", text))
         if text_len > max_len:
             return "Error: Text is too long", None
+        if text_len == 0:
+            return "Error: Please input text!", None
     show_memory_info("infer调用前")
     if language == '日本語':
         pass
@@ -85,31 +114,10 @@ if __name__ == "__main__":
         with gr.Row():
             with gr.Column():
                 # We instantiate the Textbox class
-                textbox = gr.Textbox(label="Text", placeholder="Type your sentence here (Maximum 150 words)", lines=2)
+                textbox = gr.Textbox(label="Text", placeholder="Type your sentence here (Maximum 150 words)", value = "こんにちわ！", lines=2)
                 # select character
-                char_dropdown = gr.Dropdown(choices=['0:特别周', '1:无声铃鹿', '2:东海帝王', '3:丸善斯基',
-                                              '4:富士奇迹', '5:小栗帽', '6:黄金船', '7:伏特加',
-                                              '8:大和赤骥', '9:大树快车', '10:草上飞', '11:菱亚马逊',
-                                              '12:目白麦昆', '13:神鹰', '14:好歌剧', '15:成田白仁',
-                                              '16:鲁道夫象征', '17:气槽', '18:爱丽数码', '19:青云天空',
-                                              '20:玉藻十字', '21:美妙姿势', '22:琵琶晨光', '23:重炮',
-                                              '24:曼城茶座', '25:美普波旁', '26:目白雷恩', '27:菱曙',
-                                              '28:雪之美人', '29:米浴', '30:艾尼斯风神', '31:爱丽速子',
-                                              '32:爱慕织姬', '33:稻荷一', '34:胜利奖券', '35:空中神宫',
-                                              '36:荣进闪耀', '37:真机伶', '38:川上公主', '39:黄金城市',
-                                              '40:樱花进王', '41:采珠', '42:新光风', '43:东商变革',
-                                              '44:超级小溪', '45:醒目飞鹰', '46:荒漠英雄', '47:东瀛佐敦',
-                                              '48:中山庆典', '49:成田大进', '50:西野花', '51:春乌拉拉',
-                                              '52:青竹回忆', '53:微光飞驹', '54:美丽周日', '55:待兼福来',
-                                              '56:Mr.C.B', '57:名将怒涛', '58:目白多伯', '59:优秀素质',
-                                              '60:帝王光环', '61:待兼诗歌剧', '62:生野狄杜斯', '63:目白善信',
-                                              '64:大拓太阳神', '65:双涡轮', '66:里见光钻', '67:北部玄驹',
-                                              '68:樱花千代王', '69:天狼星象征', '70:目白阿尔丹', '71:八重无敌',
-                                              '72:鹤丸刚志', '73:目白光明', '74:樱花桂冠', '75:成田路',
-                                              '76:也文摄辉', '77:吉兆', '78:谷野美酒', '79:第一红宝石',
-                                              '80:真弓快车', '81:骏川手纲', '82:凯斯奇迹', '83:小林历奇',
-                                              '84:北港火山', '85:奇锐骏', '86:秋川理事长'], label='character')
-                language_dropdown = gr.Dropdown(choices=['日本語', '简体中文', 'English'], label='language')
+                char_dropdown = gr.Dropdown(choices=characters, value = "0:特别周", label='character')
+                language_dropdown = gr.Dropdown(choices=languages, value = "日本語", label='language')
 
 
                 duration_slider = gr.Slider(minimum=0.1, maximum=5, value=1, step=0.1, label='时长 Duration')
