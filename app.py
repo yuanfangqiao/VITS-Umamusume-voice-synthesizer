@@ -84,8 +84,6 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w):
         if text_len == 0:
             print("Refused: Text length is zero.")
             return "Error: Please input text!", None
-    currentDateAndTime = datetime.now()
-    show_memory_info(str(currentDateAndTime) + "infer调用前")
     if language == '日本語':
         text = text_raw
     elif language == '简体中文':
