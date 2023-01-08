@@ -11,6 +11,10 @@ import numpy as np
 import os
 import translators.server as tss
 import psutil
+from datetime import datetime
+
+
+
 limitation = os.getenv("SYSTEM") == "spaces"  # limit text and audio length in huggingface spaces
 max_len = 150
 languages = ['日本語', '简体中文', 'English']
@@ -76,7 +80,8 @@ def infer(text, character, language, duration, noise_scale, noise_scale_w):
             return "Error: Text is too long", None
         if text_len == 0:
             return "Error: Please input text!", None
-    show_memory_info("infer调用前")
+    currentDateAndTime = datetime.now()
+    show_memory_info(str(currentDateAndTime) + "infer调用前")
     if language == '日本語':
         pass
     elif language == '简体中文':
@@ -91,8 +96,8 @@ def infer(text, character, language, duration, noise_scale, noise_scale_w):
         sid = torch.LongTensor([char_id])
         audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale, noise_scale_w=noise_scale_w,
                             length_scale=duration)[0][0, 0].data.cpu().float().numpy()
-    del stn_tst, x_tst, x_tst_lengths, sid
-    show_memory_info("infer调用后")
+    currentDateAndTime = datetime.now()
+    show_memory_info(str(currentDateAndTime) + "infer调用后")
     return (text, (22050, audio))
 
 if __name__ == "__main__":
