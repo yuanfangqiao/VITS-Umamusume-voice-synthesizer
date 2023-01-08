@@ -14,5 +14,6 @@ pypinyin==0.44.0
 jieba==0.42.1
 cn2an==0.5.17
 jieba==0.42.1
+psutil
 translators
 gradio
