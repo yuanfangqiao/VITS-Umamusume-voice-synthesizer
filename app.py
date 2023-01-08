@@ -1,19 +1,45 @@
 import argparse
-import gradio as gr
+import json
+import os
+import re
+import tempfile
+
+import librosa
+import numpy as np
 import torch
+from torch import no_grad, LongTensor
 import commons
 import utils
-import re
+import gradio as gr
+import gradio.utils as gr_utils
+import gradio.processing_utils as gr_processing_utils
 from models import SynthesizerTrn
+from text import text_to_sequence, _clean_text
 from text.symbols import symbols
-from text import text_to_sequence
-import numpy as np
-import os
+from mel_processing import spectrogram_torch
 import translators.server as tss
 import psutil
 from datetime import datetime
 
+def audio_postprocess(self, y):
+    if y is None:
+        return None
 
+    if gr_utils.validate_url(y):
+        file = gr_processing_utils.download_to_file(y, dir=self.temp_dir)
+    elif isinstance(y, tuple):
+        sample_rate, data = y
+        file = tempfile.NamedTemporaryFile(
+            suffix=".wav", dir=self.temp_dir, delete=False
+        )
+        gr_processing_utils.audio_to_file(sample_rate, data, file.name)
+    else:
+        file = gr_processing_utils.create_tmp_copy_of_file(y, dir=self.temp_dir)
+
+    return gr_processing_utils.encode_url_or_file_to_base64(file.name)
+
+
+gr.Audio.postprocess = audio_postprocess
 
 limitation = os.getenv("SYSTEM") == "spaces"  # limit text and audio length in huggingface spaces
 max_len = 150
@@ -105,6 +131,24 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w):
     show_memory_info(str(currentDateAndTime) + " infer调用后")
     return (text, (22050, audio))
 
+download_audio_js = """
+() =>{{
+    let root = document.querySelector("body > gradio-app");
+    if (root.shadowRoot != null)
+        root = root.shadowRoot;
+    let audio = root.querySelector("#{audio_id}").querySelector("audio");
+    if (audio == undefined)
+        return;
+    audio = audio.src;
+    let oA = document.createElement("a");
+    oA.download = Math.floor(Math.random()*100000000)+'.wav';
+    oA.href = audio;
+    document.body.appendChild(oA);
+    oA.click();
+    oA.remove();
+}}
+"""
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--share", action="store_true", default=False, help="share gradio app")
@@ -135,7 +179,9 @@ if __name__ == "__main__":
                 noise_scale_w_slider = gr.Slider(minimum=0.1, maximum=5, value=0.8, step=0.1, label='噪声偏差 noise_scale_w')
             with gr.Column():
                 text_output = gr.Textbox(label="Output Text")
-                audio_output = gr.Audio(label="Output Voice")
+                audio_output = gr.Audio(label="Output Audio", elem_id="tts-audio")
+                download = gr.Button("Download Audio")
+                download.click(None, [], [], _js=download_audio_js.format(audio_id="tts-audio"))
         btn = gr.Button("Generate!")
         btn.click(infer, inputs=[textbox, char_dropdown, language_dropdown,
                                  duration_slider, noise_scale_slider, noise_scale_w_slider],
