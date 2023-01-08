@@ -34,7 +34,7 @@ net_g = SynthesizerTrn(
     **hps.model)
 _ = net_g.eval()
 
-_ = utils.load_checkpoint("pretrained_models/uma_1153000.pth", net_g, None)
+_ = utils.load_checkpoint("pretrained_models/G_1153000.pth", net_g, None)
 
 def infer(text, character, language, duration, noise_scale, noise_scale_w):
     show_memory_info("infer调用前")
