@@ -43,6 +43,7 @@ gr.Audio.postprocess = audio_postprocess
 
 limitation = os.getenv("SYSTEM") == "spaces"  # limit text and audio length in huggingface spaces
 max_len = 150
+empty_audio = np.zeros(22050)
 languages = ['日本語', '简体中文', 'English']
 characters = ['0:特别周', '1:无声铃鹿', '2:东海帝王', '3:丸善斯基',
               '4:富士奇迹', '5:小栗帽', '6:黄金船', '7:伏特加',
@@ -97,19 +98,19 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w):
     # check character & duraction parameter
     if language not in languages:
         print("Error: No such language\n")
-        return "Error: No such language", None
+        return "Error: No such language", (22050, empty_audio)
     if character not in characters:
         print("Error: No such character\n")
-        return "Error: No such character", None
+        return "Error: No such character", (22050, empty_audio)
     # check text length
     if limitation:
         text_len = len(re.sub("\[([A-Z]{2})\]", "", text_raw))
         if text_len > max_len:
             print(f"Refused: Text too long ({text_len}).")
-            return "Error: Text is too long", None
+            return "Error: Text is too long", (22050, empty_audio)
         if text_len == 0:
             print("Refused: Text length is zero.")
-            return "Error: Please input text!", None
+            return "Error: Please input text!", (22050, empty_audio)
     if language == '日本語':
         text = text_raw
     elif language == '简体中文':
