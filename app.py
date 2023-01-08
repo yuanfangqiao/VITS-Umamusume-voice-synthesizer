@@ -67,27 +67,31 @@ _ = net_g.eval()
 
 _ = utils.load_checkpoint("pretrained_models/G_1153000.pth", net_g, None)
 
-def infer(text, character, language, duration, noise_scale, noise_scale_w):
+def infer(text_raw, character, language, duration, noise_scale, noise_scale_w):
     # check character & duraction parameter
     if language not in languages:
+        print("Error: No such language\n")
         return "Error: No such language", None
     if character not in characters:
+        print("Error: No such character\n")
         return "Error: No such character", None
     # check text length
     if limitation:
-        text_len = len(re.sub("\[([A-Z]{2})\]", "", text))
+        text_len = len(re.sub("\[([A-Z]{2})\]", "", text_raw))
         if text_len > max_len:
+            print(f"Refused: Text too long ({text_len}).")
             return "Error: Text is too long", None
         if text_len == 0:
+            print("Refused: Text length is zero.")
             return "Error: Please input text!", None
     currentDateAndTime = datetime.now()
     show_memory_info(str(currentDateAndTime) + "infer调用前")
     if language == '日本語':
-        pass
+        text = text_raw
     elif language == '简体中文':
-        text = tss.google(text, from_language='zh', to_language='ja')
+        text = tss.google(text_raw, from_language='zh', to_language='ja')
     elif language == 'English':
-        text = tss.google(text, from_language='en', to_language='ja')
+        text = tss.google(text_raw, from_language='en', to_language='ja')
     char_id = int(character.split(':')[0])
     stn_tst = get_text(text, hps)
     with torch.no_grad():
@@ -97,7 +101,10 @@ def infer(text, character, language, duration, noise_scale, noise_scale_w):
         audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale, noise_scale_w=noise_scale_w,
                             length_scale=duration)[0][0, 0].data.cpu().float().numpy()
     currentDateAndTime = datetime.now()
-    show_memory_info(str(currentDateAndTime) + "infer调用后")
+    print(f"inference successful: {text}\n")
+    if language != '日本語':
+        print(f"translate from {language}: {text_raw}")
+    show_memory_info(str(currentDateAndTime) + " infer调用后")
     return (text, (22050, audio))
 
 if __name__ == "__main__":
