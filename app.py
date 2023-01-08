@@ -99,7 +99,7 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w):
         audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale, noise_scale_w=noise_scale_w,
                             length_scale=duration)[0][0, 0].data.cpu().float().numpy()
     currentDateAndTime = datetime.now()
-    print(f"inference successful: {text}\n")
+    print(f"Character {character} inference successful: {text}\n")
     if language != '日本語':
         print(f"translate from {language}: {text_raw}")
     show_memory_info(str(currentDateAndTime) + " infer调用后")
