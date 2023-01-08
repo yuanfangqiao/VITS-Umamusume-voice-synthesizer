@@ -160,8 +160,10 @@ if __name__ == "__main__":
                     "This synthesizer is created based on [VITS](https://arxiv.org/abs/2106.06103) model, trained on voice data extracted from mobile game Umamusume Pretty Derby \n\n"
                     "这个合成器是基于VITS文本到语音模型，在从手游《賽馬娘：Pretty Derby》解包的语音数据上训练得到。\n\n"
                     "[introduction video / 模型介绍视频](https://www.bilibili.com/video/BV1T84y1e7p5/?vd_source=6d5c00c796eff1cbbe25f1ae722c2f9f#reply607277701)\n\n"
-                    "You may duplicate this space or [open in Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing) to run it privately and without any queue.\n\n"
-                    "您可以复制该空间至私人空间运行或打开[Google Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing)在线运行。\n\n"
+                    "Runtime Error: Memory Limit Exceeded has not been resolved yet.\n\n"
+                    "In case of space crash, You may duplicate this space or [open in Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing) to run it privately and without any queue.\n\n"
+                    "Runtime Error: Memory Limit Exceeded 问题仍然没有解决。\n\n"
+                    "作为备用选项，建议您复制该空间至私人空间运行或打开[Google Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing)在线运行。\n\n"
                     "If your input language is not Japanese, it will be translated to Japanese by Google translator, but accuracy is not guaranteed.\n\n"
                     "如果您的输入语言不是日语，则会由谷歌翻译自动翻译为日语，但是准确性不能保证。\n\n"
                     )
