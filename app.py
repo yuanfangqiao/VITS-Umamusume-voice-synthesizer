@@ -162,10 +162,9 @@ if __name__ == "__main__":
                     "[introduction video / 模型介绍视频](https://www.bilibili.com/video/BV1T84y1e7p5/?vd_source=6d5c00c796eff1cbbe25f1ae722c2f9f#reply607277701)\n\n"
                     "You may duplicate this space or [open in Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing) to run it privately and without any queue.\n\n"
                     "您可以复制该空间至私人空间运行或打开[Google Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing)在线运行。\n\n"
-                    "This model has been integrated to the model collections of [Moe-tts](https://huggingface.co/spaces/skytnt/moe-tts), it is suggested to bookmark moe-tts as a backup, in case this space may crash some time.\n\n"
+                    "This model has been integrated to the model collections of [Moe-tts](https://huggingface.co/spaces/skytnt/moe-tts).\n\n"
                     "现已加入[Moe-tts](https://huggingface.co/spaces/skytnt/moe-tts)模型大全。\n\n"
-                    "若有bug欢迎及时反馈。\n\n"
-                    "2023/1/9 更新： 人物全是特别周的bug已修复，对此带来的不便感到十分抱歉。\n\n"
+                    "! ! ! 若有bug欢迎及时反馈 ! ! ! QQ:1925208426 \n\n"
                     "If your input language is not Japanese, it will be translated to Japanese by Google translator, but accuracy is not guaranteed.\n\n"
                     "如果您的输入语言不是日语，则会由谷歌翻译自动翻译为日语，但是准确性不能保证。\n\n"
                     )
@@ -203,4 +202,10 @@ if __name__ == "__main__":
             outputs=[text_output, audio_output],
             fn=infer
         )
+        gr.Markdown("# Updates Logs 更新日志：\n\n"
+                   "2023/1/9：\n\n"
+                   “人物全是特别周的bug已修复，对此带来的不便感到十分抱歉。\n\n"
+                   "模型推理已全面转为onnxruntime，现在不会出现Runtime Error: Memory Limit Exceeded了。\n\n”
+                   "现已加入[Moe-tts](https://huggingface.co/spaces/skytnt/moe-tts)模型大全。\n\n"
+                   )
     app.queue(concurrency_count=3).launch(show_api=False, share=args.share)
