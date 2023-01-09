@@ -9,12 +9,14 @@ torch
 torchvision
 torchaudio
 unidecode
-pyopenjtalk>=0.3.0
+pyopenjtalk
 jamo
 pypinyin
 protobuf
 inflect
 opencc
+onnx
+onnxruntime
 psutil
 translators
 gradio
