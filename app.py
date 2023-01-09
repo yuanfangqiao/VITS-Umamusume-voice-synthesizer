@@ -3,6 +3,9 @@ import json
 import os
 import re
 import tempfile
+import logging
+logging.getLogger('numba').setLevel(logging.WARNING)
+import ONNXVITS_infer
 import librosa
 import numpy as np
 import torch
@@ -42,7 +45,6 @@ gr.Audio.postprocess = audio_postprocess
 
 limitation = os.getenv("SYSTEM") == "spaces"  # limit text and audio length in huggingface spaces
 max_len = 150
-empty_audio = np.zeros(22050)
 languages = ['日本語', '简体中文', 'English']
 characters = ['0:特别周', '1:无声铃鹿', '2:东海帝王', '3:丸善斯基',
               '4:富士奇迹', '5:小栗帽', '6:黄金船', '7:伏特加',
@@ -75,41 +77,40 @@ def show_memory_info(hint):
 
 
 def get_text(text, hps):
-    text_norm = text_to_sequence(text, hps.data.text_cleaners)
+    text_norm = text_to_sequence(text, hps.symbols, hps.data.text_cleaners)
     if hps.data.add_blank:
         text_norm = commons.intersperse(text_norm, 0)
     text_norm = torch.LongTensor(text_norm)
     return text_norm
 
-
 hps = utils.get_hparams_from_file("./configs/uma87.json")
-net_g = SynthesizerTrn(
-    len(symbols),
+net_g = ONNXVITS_infer.SynthesizerTrn(
+    len(hps.symbols),
     hps.data.filter_length // 2 + 1,
     hps.train.segment_size // hps.data.hop_length,
     n_speakers=hps.data.n_speakers,
     **hps.model)
 _ = net_g.eval()
 
-_ = utils.load_checkpoint("pretrained_models/G_1153000.pth", net_g, None)
+_ = utils.load_checkpoint("pretrained_models/G_1153000.pth", net_g)
 
 def infer(text_raw, character, language, duration, noise_scale, noise_scale_w):
     # check character & duraction parameter
     if language not in languages:
         print("Error: No such language\n")
-        return "Error: No such language", (22050, empty_audio)
+        return "Error: No such language", None
     if character not in characters:
         print("Error: No such character\n")
-        return "Error: No such character", (22050, empty_audio)
+        return "Error: No such character", None
     # check text length
     if limitation:
         text_len = len(re.sub("\[([A-Z]{2})\]", "", text_raw))
         if text_len > max_len:
             print(f"Refused: Text too long ({text_len}).")
-            return "Error: Text is too long", (22050, empty_audio)
+            return "Error: Text is too long", None
         if text_len == 0:
             print("Refused: Text length is zero.")
-            return "Error: Please input text!", (22050, empty_audio)
+            return "Error: Please input text!", None
     if language == '日本語':
         text = text_raw
     elif language == '简体中文':
@@ -121,11 +122,10 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w):
     with torch.no_grad():
         x_tst = stn_tst.unsqueeze(0)
         x_tst_lengths = torch.LongTensor([stn_tst.size(0)])
-        sid = torch.LongTensor([char_id])
-        audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale, noise_scale_w=noise_scale_w,
-                            length_scale=duration)[0][0, 0].data.cpu().float().numpy()
+        sid = torch.LongTensor([0])
+        audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale, noise_scale_w=noise_scale_w, length_scale=duration)[0][0,0].data.float().numpy()
     currentDateAndTime = datetime.now()
-    print(f"\nCharacter {character} inference successful: {text}")
+    print(f"Character {character} inference successful: {text}\n")
     if language != '日本語':
         print(f"translate from {language}: {text_raw}")
     show_memory_info(str(currentDateAndTime) + " infer调用后")
@@ -160,10 +160,8 @@ if __name__ == "__main__":
                     "This synthesizer is created based on [VITS](https://arxiv.org/abs/2106.06103) model, trained on voice data extracted from mobile game Umamusume Pretty Derby \n\n"
                     "这个合成器是基于VITS文本到语音模型，在从手游《賽馬娘：Pretty Derby》解包的语音数据上训练得到。\n\n"
                     "[introduction video / 模型介绍视频](https://www.bilibili.com/video/BV1T84y1e7p5/?vd_source=6d5c00c796eff1cbbe25f1ae722c2f9f#reply607277701)\n\n"
-                    "Runtime Error: Memory Limit Exceeded has not been resolved yet.\n\n"
-                    "In case of space crash, You may duplicate this space or [open in Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing) to run it privately and without any queue.\n\n"
-                    "Runtime Error: Memory Limit Exceeded 问题仍然没有解决。\n\n"
-                    "作为备用选项，建议您复制该空间至私人空间运行或打开[Google Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing)在线运行。\n\n"
+                    "You may duplicate this space or [open in Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing) to run it privately and without any queue.\n\n"
+                    "您可以复制该空间至私人空间运行或打开[Google Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing)在线运行。\n\n"
                     "If your input language is not Japanese, it will be translated to Japanese by Google translator, but accuracy is not guaranteed.\n\n"
                     "如果您的输入语言不是日语，则会由谷歌翻译自动翻译为日语，但是准确性不能保证。\n\n"
                     )
