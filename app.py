@@ -125,7 +125,7 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w):
         sid = torch.LongTensor([0])
         audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale, noise_scale_w=noise_scale_w, length_scale=duration)[0][0,0].data.float().numpy()
     currentDateAndTime = datetime.now()
-    print(f"Character {character} inference successful: {text}\n")
+    print(f"\nCharacter {character} inference successful: {text}")
     if language != '日本語':
         print(f"translate from {language}: {text_raw}")
     show_memory_info(str(currentDateAndTime) + " infer调用后")
