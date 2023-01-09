@@ -1,16 +1,5 @@
-import math
-import os
-import random
 import torch
-from torch import nn
-import torch.nn.functional as F
 import torch.utils.data
-import numpy as np
-import librosa
-import librosa.util as librosa_util
-from librosa.util import normalize, pad_center, tiny
-from scipy.signal import get_window
-from scipy.io.wavfile import read
 from librosa.filters import mel as librosa_mel_fn
 
 MAX_WAV_VALUE = 32768.0
@@ -64,7 +53,7 @@ def spectrogram_torch(y, n_fft, sampling_rate, hop_size, win_size, center=False)
     y = y.squeeze(1)
 
     spec = torch.stft(y, n_fft, hop_length=hop_size, win_length=win_size, window=hann_window[wnsize_dtype_device],
-                      center=center, pad_mode='reflect', normalized=False, onesided=True)
+                      center=center, pad_mode='reflect', normalized=False, onesided=True, return_complex=False)
 
     spec = torch.sqrt(spec.pow(2).sum(-1) + 1e-6)
     return spec
