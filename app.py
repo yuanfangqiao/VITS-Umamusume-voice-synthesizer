@@ -204,8 +204,8 @@ if __name__ == "__main__":
         )
         gr.Markdown("# Updates Logs 更新日志：\n\n"
                    "2023/1/9：\n\n"
-                   “人物全是特别周的bug已修复，对此带来的不便感到十分抱歉。\n\n"
-                   "模型推理已全面转为onnxruntime，现在不会出现Runtime Error: Memory Limit Exceeded了。\n\n”
+                   "人物全是特别周的bug已修复，对此带来的不便感到十分抱歉。\n\n"
+                   "模型推理已全面转为onnxruntime，现在不会出现Runtime Error: Memory Limit Exceeded了。\n\n"
                    "现已加入[Moe-tts](https://huggingface.co/spaces/skytnt/moe-tts)模型大全。\n\n"
                    )
     app.queue(concurrency_count=3).launch(show_api=False, share=args.share)
