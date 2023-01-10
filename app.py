@@ -158,7 +158,7 @@ if __name__ == "__main__":
         gr.Markdown("# Umamusume voice synthesizer 赛马娘语音合成器\n\n"
                     "![visitor badge](https://visitor-badge.glitch.me/badge?page_id=Plachta.VITS-Umamusume-voice-synthesizer)\n\n"
                     "This synthesizer is created based on [VITS](https://arxiv.org/abs/2106.06103) model, trained on voice data extracted from mobile game Umamusume Pretty Derby \n\n"
-                    "这个合成器是基于VITS文本到语音模型，在从手游《賽馬娘：Pretty Derby》解包的语音数据上训练得到。\n\n"
+                    "这个合成器是基于VITS文本到语音模型，在从手游《賽馬娘：Pretty Derby》解包的语音数据上训练得到。[Dataset Link](https://huggingface.co/datasets/Plachta/Umamusume-voice-text-pairs/tree/main)\n\n"
                     "[introduction video / 模型介绍视频](https://www.bilibili.com/video/BV1T84y1e7p5/?vd_source=6d5c00c796eff1cbbe25f1ae722c2f9f#reply607277701)\n\n"
                     "You may duplicate this space or [open in Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing) to run it privately and without any queue.\n\n"
                     "您可以复制该空间至私人空间运行或打开[Google Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing)在线运行。\n\n"
@@ -203,6 +203,8 @@ if __name__ == "__main__":
             fn=infer
         )
         gr.Markdown("# Updates Logs 更新日志：\n\n"
+                   "2023/1/10：\n\n"
+                   "数据集已上传，您可以在[这里](https://huggingface.co/datasets/Plachta/Umamusume-voice-text-pairs/tree/main)下载。\n\n"
                    "2023/1/9：\n\n"
                    "人物全是特别周的bug已修复，对此带来的不便感到十分抱歉。\n\n"
                    "模型推理已全面转为onnxruntime，现在不会出现Runtime Error: Memory Limit Exceeded了。\n\n"
