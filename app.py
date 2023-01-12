@@ -131,7 +131,7 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w, i
     with torch.no_grad():
         x_tst = stn_tst.unsqueeze(0)
         x_tst_lengths = torch.LongTensor([stn_tst.size(0)])
-        sid = torch.LongTensor([0])
+        sid = torch.LongTensor([char_id])
         audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale, noise_scale_w=noise_scale_w, length_scale=duration)[0][0,0].data.float().numpy()
     currentDateAndTime = datetime.now()
     print(f"Character {character} inference successful: {text}\n")
