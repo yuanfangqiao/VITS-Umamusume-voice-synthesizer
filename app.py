@@ -246,8 +246,8 @@ if __name__ == "__main__":
         )
         gr.Markdown("# Updates Logs 更新日志：\n\n"
                    "2023/1/12：\n\n"
-                   "增加了音素输入的功能，可以对语气和语调做到一定程度的精细控制。"
-                   "调整了UI的布局。"
+                   "增加了音素输入的功能，可以对语气和语调做到一定程度的精细控制。\n\n"
+                   "调整了UI的布局。\n\n"
                    "2023/1/10：\n\n"
                    "数据集已上传，您可以在[这里](https://huggingface.co/datasets/Plachta/Umamusume-voice-text-pairs/tree/main)下载。\n\n"
                    "2023/1/9：\n\n"
