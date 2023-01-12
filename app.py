@@ -44,7 +44,6 @@ def audio_postprocess(self, y):
 gr.Audio.postprocess = audio_postprocess
 
 limitation = os.getenv("SYSTEM") == "spaces"  # limit text and audio length in huggingface spaces
-max_len = 150
 languages = ['日本語', '简体中文', 'English']
 characters = ['0:特别周', '1:无声铃鹿', '2:东海帝王', '3:丸善斯基',
               '4:富士奇迹', '5:小栗帽', '6:黄金船', '7:伏特加',
@@ -76,14 +75,15 @@ def show_memory_info(hint):
     print("{} 内存占用: {} MB".format(hint, memory))
 
 
-def get_text(text, hps):
-    text_norm = text_to_sequence(text, hps.symbols, hps.data.text_cleaners)
+def get_text(text, hps, is_symbol):
+    text_norm = text_to_sequence(text, hps.symbols, [] if is_symbol else hps.data.text_cleaners)
     if hps.data.add_blank:
         text_norm = commons.intersperse(text_norm, 0)
-    text_norm = torch.LongTensor(text_norm)
+    text_norm = LongTensor(text_norm)
     return text_norm
 
 hps = utils.get_hparams_from_file("./configs/uma87.json")
+symbols = hps.symbols
 net_g = ONNXVITS_infer.SynthesizerTrn(
     len(hps.symbols),
     hps.data.filter_length // 2 + 1,
@@ -94,7 +94,11 @@ _ = net_g.eval()
 
 _ = utils.load_checkpoint("pretrained_models/G_1153000.pth", net_g)
 
-def infer(text_raw, character, language, duration, noise_scale, noise_scale_w):
+def to_symbol_fn(is_symbol_input, input_text, temp_text):
+    return (_clean_text(input_text, hps.data.text_cleaners), input_text) if is_symbol_input \
+        else (temp_text, temp_text)
+
+def infer(text_raw, character, language, duration, noise_scale, noise_scale_w, is_symbol):
     # check character & duraction parameter
     if language not in languages:
         print("Error: No such language\n")
@@ -104,28 +108,33 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w):
         return "Error: No such character", None
     # check text length
     if limitation:
-        text_len = len(re.sub("\[([A-Z]{2})\]", "", text_raw))
+        text_len = len(text_raw) if is_symbol else len(re.sub("\[([A-Z]{2})\]", "", text_raw))
+        max_len = 150
+        if is_symbol:
+            max_len *= 3
         if text_len > max_len:
             print(f"Refused: Text too long ({text_len}).")
             return "Error: Text is too long", None
         if text_len == 0:
             print("Refused: Text length is zero.")
             return "Error: Please input text!", None
-    if language == '日本語':
+    if is_symbol:
+        text = text_raw
+    elif language == '日本語':
         text = text_raw
     elif language == '简体中文':
         text = tss.google(text_raw, from_language='zh', to_language='ja')
     elif language == 'English':
         text = tss.google(text_raw, from_language='en', to_language='ja')
     char_id = int(character.split(':')[0])
-    stn_tst = get_text(text, hps)
+    stn_tst = get_text(text, hps, is_symbol)
     with torch.no_grad():
         x_tst = stn_tst.unsqueeze(0)
         x_tst_lengths = torch.LongTensor([stn_tst.size(0)])
-        sid = torch.LongTensor([char_id])
+        sid = torch.LongTensor([0])
         audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale, noise_scale_w=noise_scale_w, length_scale=duration)[0][0,0].data.float().numpy()
     currentDateAndTime = datetime.now()
-    print(f"\nCharacter {character} inference successful: {text}")
+    print(f"Character {character} inference successful: {text}\n")
     if language != '日本語':
         print(f"translate from {language}: {text_raw}")
     show_memory_info(str(currentDateAndTime) + " infer调用后")
@@ -171,7 +180,37 @@ if __name__ == "__main__":
         with gr.Row():
             with gr.Column():
                 # We instantiate the Textbox class
-                textbox = gr.Textbox(label="Text", placeholder="Type your sentence here (Maximum 150 words)", value = "こんにちわ！", lines=2)
+                textbox = gr.TextArea(label="Text", placeholder="Type your sentence here (Maximum 150 words)", value="こんにちわ。", elem_id=f"tts-input")
+                with gr.Accordion(label="Advanced Options", open=False):
+                    temp_text_var = gr.Variable()
+                    symbol_input = gr.Checkbox(value=False, label="Symbol input")
+                    symbol_list = gr.Dataset(label="Symbol list", components=[textbox],
+                                             samples=[[x] for x in symbols],
+                                             elem_id=f"symbol-list")
+                    symbol_list_json = gr.Json(value=symbols, visible=False)
+                symbol_input.change(to_symbol_fn,
+                                    [symbol_input, textbox, temp_text_var],
+                                    [textbox, temp_text_var])
+                symbol_list.click(None, [symbol_list, symbol_list_json], [],
+                                  _js=f"""
+                (i, symbols) => {{
+                    let root = document.querySelector("body > gradio-app");
+                    if (root.shadowRoot != null)
+                        root = root.shadowRoot;
+                    let text_input = root.querySelector("#tts-input").querySelector("textarea");
+                    let startPos = text_input.selectionStart;
+                    let endPos = text_input.selectionEnd;
+                    let oldTxt = text_input.value;
+                    let result = oldTxt.substring(0, startPos) + symbols[i] + oldTxt.substring(endPos);
+                    text_input.value = result;
+                    let x = window.scrollX, y = window.scrollY;
+                    text_input.focus();
+                    text_input.selectionStart = startPos + symbols[i].length;
+                    text_input.selectionEnd = startPos + symbols[i].length;
+                    text_input.blur();
+                    window.scrollTo(x, y);
+                    return [];
+                }}""")
                 # select character
                 char_dropdown = gr.Dropdown(choices=characters, value = "0:特别周", label='character')
                 language_dropdown = gr.Dropdown(choices=languages, value = "日本語", label='language')
@@ -180,6 +219,9 @@ if __name__ == "__main__":
                 duration_slider = gr.Slider(minimum=0.1, maximum=5, value=1, step=0.1, label='时长 Duration')
                 noise_scale_slider = gr.Slider(minimum=0.1, maximum=5, value=0.667, step=0.001, label='噪声比例 noise_scale')
                 noise_scale_w_slider = gr.Slider(minimum=0.1, maximum=5, value=0.8, step=0.1, label='噪声偏差 noise_scale_w')
+
+                
+                
             with gr.Column():
                 text_output = gr.Textbox(label="Output Text")
                 audio_output = gr.Audio(label="Output Audio", elem_id="tts-audio")
@@ -187,22 +229,24 @@ if __name__ == "__main__":
                 download.click(None, [], [], _js=download_audio_js.format(audio_id="tts-audio"))
         btn = gr.Button("Generate!")
         btn.click(infer, inputs=[textbox, char_dropdown, language_dropdown,
-                                 duration_slider, noise_scale_slider, noise_scale_w_slider],
+                                 duration_slider, noise_scale_slider, noise_scale_w_slider, symbol_input],
                   outputs=[text_output, audio_output])
-        examples = [['お疲れ様です，トレーナーさん。', '1:无声铃鹿', '日本語', 1, 0.667, 0.8],
-                    ['張り切っていこう！', '67:北部玄驹', '日本語', 1, 0.667, 0.8],
-                    ['何でこんなに慣れでんのよ，私のほが先に好きだっだのに。', '10:草上飞', '日本語', 1, 0.667, 0.8],
-                    ['授業中に出しだら，学校生活終わるですわ。', '12:目白麦昆', '日本語', 1, 0.667, 0.8],
-                    ['お帰りなさい，お兄様！', '29:米浴', '日本語', 1, 0.667, 0.8],
-                    ['私の処女をもらっでください！', '29:米浴', '日本語', 1, 0.667, 0.8]]
+        examples = [['お疲れ様です，トレーナーさん。', '1:无声铃鹿', '日本語', 1, 0.667, 0.8, False],
+                    ['張り切っていこう！', '67:北部玄驹', '日本語', 1, 0.667, 0.8, False],
+                    ['何でこんなに慣れでんのよ，私のほが先に好きだっだのに。', '10:草上飞', '日本語', 1, 0.667, 0.8, False],
+                    ['授業中に出しだら，学校生活終わるですわ。', '12:目白麦昆', '日本語', 1, 0.667, 0.8, False],
+                    ['お帰りなさい，お兄様！', '29:米浴', '日本語', 1, 0.667, 0.8, False],
+                    ['私の処女をもらっでください！', '29:米浴', '日本語', 1, 0.667, 0.8, False]]
         gr.Examples(
             examples=examples,
             inputs=[textbox, char_dropdown, language_dropdown,
-                    duration_slider, noise_scale_slider,noise_scale_w_slider],
+                    duration_slider, noise_scale_slider,noise_scale_w_slider, symbol_input],
             outputs=[text_output, audio_output],
             fn=infer
         )
         gr.Markdown("# Updates Logs 更新日志：\n\n"
+                   "2023/1/12：\n\n"
+                   "增加了音素输入的功能，可以对语气和语调做到一定程度的精细控制。"
                    "2023/1/10：\n\n"
                    "数据集已上传，您可以在[这里](https://huggingface.co/datasets/Plachta/Umamusume-voice-text-pairs/tree/main)下载。\n\n"
                    "2023/1/9：\n\n"
