@@ -225,12 +225,12 @@ if __name__ == "__main__":
             with gr.Column():
                 text_output = gr.Textbox(label="Output Text")
                 audio_output = gr.Audio(label="Output Audio", elem_id="tts-audio")
+                btn = gr.Button("Generate!")
+                btn.click(infer, inputs=[textbox, char_dropdown, language_dropdown,
+                                         duration_slider, noise_scale_slider, noise_scale_w_slider, symbol_input],
+                          outputs=[text_output, audio_output])
                 download = gr.Button("Download Audio")
                 download.click(None, [], [], _js=download_audio_js.format(audio_id="tts-audio"))
-        btn = gr.Button("Generate!")
-        btn.click(infer, inputs=[textbox, char_dropdown, language_dropdown,
-                                 duration_slider, noise_scale_slider, noise_scale_w_slider, symbol_input],
-                  outputs=[text_output, audio_output])
         examples = [['お疲れ様です，トレーナーさん。', '1:无声铃鹿', '日本語', 1, 0.667, 0.8, False],
                     ['張り切っていこう！', '67:北部玄驹', '日本語', 1, 0.667, 0.8, False],
                     ['何でこんなに慣れでんのよ，私のほが先に好きだっだのに。', '10:草上飞', '日本語', 1, 0.667, 0.8, False],
@@ -247,6 +247,7 @@ if __name__ == "__main__":
         gr.Markdown("# Updates Logs 更新日志：\n\n"
                    "2023/1/12：\n\n"
                    "增加了音素输入的功能，可以对语气和语调做到一定程度的精细控制。"
+                   "调整了UI的布局。"
                    "2023/1/10：\n\n"
                    "数据集已上传，您可以在[这里](https://huggingface.co/datasets/Plachta/Umamusume-voice-text-pairs/tree/main)下载。\n\n"
                    "2023/1/9：\n\n"
