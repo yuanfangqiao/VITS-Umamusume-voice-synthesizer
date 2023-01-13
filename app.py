@@ -231,13 +231,13 @@ if __name__ == "__main__":
                           outputs=[text_output, audio_output])
                 download = gr.Button("Download Audio")
                 download.click(None, [], [], _js=download_audio_js.format(audio_id="tts-audio"))
-        examples = [['お疲れ様です，トレーナーさん。', '1:无声铃鹿', '日本語', 1, 0.667, 0.8, False],
+        examples = [['haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......', '29:米浴', '日本語', 1, 0.667, 0.8, True],
+                    ['お疲れ様です，トレーナーさん。', '1:无声铃鹿', '日本語', 1, 0.667, 0.8, False],
                     ['張り切っていこう！', '67:北部玄驹', '日本語', 1, 0.667, 0.8, False],
                     ['何でこんなに慣れでんのよ，私のほが先に好きだっだのに。', '10:草上飞', '日本語', 1, 0.667, 0.8, False],
                     ['授業中に出しだら，学校生活終わるですわ。', '12:目白麦昆', '日本語', 1, 0.667, 0.8, False],
                     ['お帰りなさい，お兄様！', '29:米浴', '日本語', 1, 0.667, 0.8, False],
-                    ['私の処女をもらっでください！', '29:米浴', '日本語', 1, 0.667, 0.8, False],
-                    ['haa\u2191......haa\u2191......haa\u2191......haa\u2191......haa\u2191......haa\u2191......haa\u2191......haa\u2191......haa\u2191......haa\u2191......haa\u2191......haa\u2191......', '29:米浴', '日本語', 1, 0.667, 0.8, True]]
+                    ['私の処女をもらっでください！', '29:米浴', '日本語', 1, 0.667, 0.8, False]]
         gr.Examples(
             examples=examples,
             inputs=[textbox, char_dropdown, language_dropdown,
@@ -246,6 +246,8 @@ if __name__ == "__main__":
             fn=infer
         )
         gr.Markdown("# Updates Logs 更新日志：\n\n"
+                   "2023/1/13：\n\n"
+                   "增加了音素输入的example（米浴喘气）"
                    "2023/1/12：\n\n"
                    "增加了音素输入的功能，可以对语气和语调做到一定程度的精细控制。\n\n"
                    "调整了UI的布局。\n\n"
