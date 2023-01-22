@@ -1,6 +1,6 @@
 ---
-title: Uma Voice
-emoji: 🚀
+title: Umamusume-VITS-TTS
+emoji: 🐴
 colorFrom: green
 colorTo: gray
 sdk: gradio
