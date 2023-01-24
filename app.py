@@ -22,7 +22,6 @@ from mel_processing import spectrogram_torch
 import translators.server as tss
 import psutil
 from datetime import datetime
-import romajitable
 from text.cleaners import japanese_cleaners
 
 def audio_postprocess(self, y):
