@@ -45,7 +45,7 @@ def audio_postprocess(self, y):
 gr.Audio.postprocess = audio_postprocess
 
 limitation = os.getenv("SYSTEM") == "spaces"  # limit text and audio length in huggingface spaces
-languages = ['日本語', '简体中文', 'English', 'English2Katakana']
+languages = ['日本語', '简体中文', 'English']
 characters = ['0:特别周', '1:无声铃鹿', '2:东海帝王', '3:丸善斯基',
               '4:富士奇迹', '5:小栗帽', '6:黄金船', '7:伏特加',
               '8:大和赤骥', '9:大树快车', '10:草上飞', '11:菱亚马逊',
