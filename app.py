@@ -162,7 +162,7 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w, i
                 duration_info_str += ", "
         audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale, noise_scale_w=noise_scale_w, length_scale=duration)[0][0,0].data.float().numpy()
     currentDateAndTime = datetime.now()
-    print(f"Character {character} inference successful: {text}\n")
+    print(f"\nCharacter {character} inference successful: {text}")
     if language != '日本語':
         print(f"translate from {language}: {text_raw}")
     show_memory_info(str(currentDateAndTime) + " infer调用后")
@@ -189,10 +189,9 @@ def infer_from_phoneme_dur(duration_info_str, character, duration, noise_scale, 
         x_tst = stn_tst.unsqueeze(0)
         x_tst_lengths = torch.LongTensor([stn_tst.size(0)])
         sid = torch.LongTensor([char_id])
-        print(len(recons_durs))
-        print(x_tst.shape[1])
         audio = net_g.infer_with_duration(x_tst, x_tst_lengths, w_ceil=recons_durs, sid=sid, noise_scale=noise_scale, noise_scale_w=noise_scale_w,
                             length_scale=duration)[0][0, 0].data.cpu().float().numpy()
+    print(f"\nCharacter {character} inference successful: {recons_phonemes}, from {duration_info_str}")
     return (recons_phonemes, (22050, audio))
 
 download_audio_js = """
