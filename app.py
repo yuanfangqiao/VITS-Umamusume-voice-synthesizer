@@ -282,10 +282,17 @@ if __name__ == "__main__":
                 text_output = gr.Textbox(label="Output Text")
                 audio_output = gr.Audio(label="Output Audio", elem_id="tts-audio")
                 btn = gr.Button("Generate!")
+                cus_dur_gn_btn = gr.Button("Regenerate with custom phoneme durations")
+                btn.click(infer, inputs=[textbox, char_dropdown, language_dropdown, duration_slider, noise_scale_slider, noise_scale_w_slider, symbol_input], 
+                  outputs=[text_output, audio_output, phoneme_output, duration_output])
+                download = gr.Button("Download Audio")
+                download.click(None, [], [], _js=download_audio_js.format(audio_id="tts-audio"))
                 with gr.Accordion(label="Speaking Pace Control", open=True):
                     phoneme_output = gr.Textbox(label="Output Phonemes", interactive=False)
-                    duration_output = gr.Textbox(label="Duration of each phoneme", placeholder="After you generate a sentence, the detailed information of each phoneme's duration will be presented here. You can edit phoneme durations here and click regenerate for more precise control.",
+                    duration_output = gr.Textbox(label="Duration of each phoneme", placeholder="After you generate a sentence, the detailed information of each phoneme's duration will be presented here.",
                                                 interactive = True)
+                    cus_dur_gn_btn.click(infer_from_phoneme_dur, inputs=[duration_output, char_dropdown, duration_slider, noise_scale_slider, noise_scale_w_slider], 
+                          outputs=[phoneme_output, audio_output])
                     gr.Markdown(
                         "\{ \}内的数字代表每个音素在生成的音频中的长度，\{ \}外的数字代表音素之间间隔的长度。"
                         "您可以手动修改这些数字来控制每个音素以及间隔的长度，从而完全控制合成音频的说话节奏。"
@@ -294,13 +301,7 @@ if __name__ == "__main__":
                         "You can manually change the numbers to adjust the length of each phoneme, so that speaking pace can be completely controlled."
                         "Note that these numbers should be integers only. \n\n(1 represents a length of 0.01161 seconds)\n\n"
                     )
-                cus_dur_gn_btn = gr.Button("Regenerate with custom phoneme durations")
-                btn.click(infer, inputs=[textbox, char_dropdown, language_dropdown, duration_slider, noise_scale_slider, noise_scale_w_slider, symbol_input], 
-                  outputs=[text_output, audio_output, phoneme_output, duration_output])
-                cus_dur_gn_btn.click(infer_from_phoneme_dur, inputs=[duration_output, char_dropdown, duration_slider, noise_scale_slider, noise_scale_w_slider], 
-                          outputs=[phoneme_output, audio_output])
-                download = gr.Button("Download Audio")
-                download.click(None, [], [], _js=download_audio_js.format(audio_id="tts-audio"))
+                
         examples = [['haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......haa\u2193......', '29:米浴', '日本語', 1, 0.667, 0.8, True],
                     ['お疲れ様です，トレーナーさん。', '1:无声铃鹿', '日本語', 1, 0.667, 0.8, False],
                     ['張り切っていこう！', '67:北部玄驹', '日本語', 1, 0.667, 0.8, False],
