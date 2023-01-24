@@ -140,10 +140,14 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w, i
         durations = net_g.predict_duration(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale,
                                            noise_scale_w=noise_scale_w, length_scale=duration)
         char_dur_list = []
-        for i, char in enumerate(jp2phoneme):
-            char_pos = i * 2 + 1
-            char_dur = durations[char_pos]
-            char_dur_list.append(char_dur)
+        try:
+            for i, char in enumerate(jp2phoneme):
+                char_pos = i * 2 + 1
+                char_dur = durations[char_pos]
+                char_dur_list.append(char_dur)
+        except IndexError:
+            print("Refused: Phoneme input contains non-phoneme character.")
+            return "Error: You can only input phoneme under phoneme input model", None
         char_spacing_dur_list = []
         char_spacings = []
         for i in range(len(durations)):
