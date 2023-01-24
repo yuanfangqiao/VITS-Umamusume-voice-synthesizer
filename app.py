@@ -127,8 +127,6 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w, i
         text = tss.google(text_raw, from_language='zh', to_language='ja')
     elif language == 'English':
         text = tss.google(text_raw, from_language='en', to_language='ja')
-    elif language == "English2Katakana":
-        text = romajitable.to_kana(text_raw).katakana
     char_id = int(character.split(':')[0])
     stn_tst = get_text(text, hps, is_symbol)
     with torch.no_grad():
