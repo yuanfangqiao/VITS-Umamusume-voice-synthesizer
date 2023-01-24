@@ -133,14 +133,14 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w, i
         x_tst = stn_tst.unsqueeze(0)
         x_tst_lengths = torch.LongTensor([stn_tst.size(0)])
         sid = torch.LongTensor([char_id])
-        if not is_symbol:
-            jp2phoneme = japanese_cleaners(text)
-        else:
-            jp2phoneme = text
-        durations = net_g.predict_duration(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale,
-                                           noise_scale_w=noise_scale_w, length_scale=duration)
-        char_dur_list = []
         try:
+            if not is_symbol:
+                jp2phoneme = japanese_cleaners(text)
+            else:
+                jp2phoneme = text
+            durations = net_g.predict_duration(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale,
+                                               noise_scale_w=noise_scale_w, length_scale=duration)
+            char_dur_list = []
             for i, char in enumerate(jp2phoneme):
                 char_pos = i * 2 + 1
                 char_dur = durations[char_pos]
