@@ -280,6 +280,7 @@ if __name__ == "__main__":
                 
             with gr.Column():
                 text_output = gr.Textbox(label="Output Text")
+                phoneme_output = gr.Textbox(label="Output Phonemes", interactive=False)
                 audio_output = gr.Audio(label="Output Audio", elem_id="tts-audio")
                 btn = gr.Button("Generate!")
                 cus_dur_gn_btn = gr.Button("Regenerate with custom phoneme durations")
@@ -288,7 +289,7 @@ if __name__ == "__main__":
                 download = gr.Button("Download Audio")
                 download.click(None, [], [], _js=download_audio_js.format(audio_id="tts-audio"))
                 with gr.Accordion(label="Speaking Pace Control", open=True):
-                    phoneme_output = gr.Textbox(label="Output Phonemes", interactive=False)
+                    
                     duration_output = gr.Textbox(label="Duration of each phoneme", placeholder="After you generate a sentence, the detailed information of each phoneme's duration will be presented here.",
                                                 interactive = True)
                     cus_dur_gn_btn.click(infer_from_phoneme_dur, inputs=[duration_output, char_dropdown, duration_slider, noise_scale_slider, noise_scale_w_slider], 
