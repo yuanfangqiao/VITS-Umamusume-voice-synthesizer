@@ -103,10 +103,10 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w, i
     # check character & duraction parameter
     if language not in languages:
         print("Error: No such language\n")
-        return "Error: No such language", None
+        return "Error: No such language", None, None, None
     if character not in characters:
         print("Error: No such character\n")
-        return "Error: No such character", None
+        return "Error: No such character", None, None, None
     # check text length
     if limitation:
         text_len = len(text_raw) if is_symbol else len(re.sub("\[([A-Z]{2})\]", "", text_raw))
@@ -115,10 +115,10 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w, i
             max_len *= 3
         if text_len > max_len:
             print(f"Refused: Text too long ({text_len}).")
-            return "Error: Text is too long", None
+            return "Error: Text is too long", None, None, None
         if text_len == 0:
             print("Refused: Text length is zero.")
-            return "Error: Please input text!", None
+            return "Error: Please input text!", None, None, None
     if is_symbol:
         text = text_raw
     elif language == '日本語':
@@ -147,7 +147,7 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w, i
                 char_dur_list.append(char_dur)
         except IndexError:
             print("Refused: Phoneme input contains non-phoneme character.")
-            return "Error: You can only input phoneme under phoneme input model", None
+            return "Error: You can only input phoneme under phoneme input model", None, None, None
         char_spacing_dur_list = []
         char_spacings = []
         for i in range(len(durations)):
