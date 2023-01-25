@@ -232,8 +232,6 @@ if __name__ == "__main__":
                     "[introduction video / 模型介绍视频](https://www.bilibili.com/video/BV1T84y1e7p5/?vd_source=6d5c00c796eff1cbbe25f1ae722c2f9f#reply607277701)\n\n"
                     "You may duplicate this space or [open in Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing) to run it privately and without any queue.\n\n"
                     "您可以复制该空间至私人空间运行或打开[Google Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing)在线运行。\n\n"
-                    "This model has been integrated to the model collections of [Moe-tts](https://huggingface.co/spaces/skytnt/moe-tts).\n\n"
-                    "现已加入[Moe-tts](https://huggingface.co/spaces/skytnt/moe-tts)模型大全。\n\n"
                     "If you have any suggestions or bug reports, feel free to open discussion in [Community](https://huggingface.co/spaces/Plachta/VITS-Umamusume-voice-synthesizer/discussions).\n\n"
                     "若有bug反馈或建议，请在[Community](https://huggingface.co/spaces/Plachta/VITS-Umamusume-voice-synthesizer/discussions)下开启一个新的Discussion。 \n\n"
                     "If your input language is not Japanese, it will be translated to Japanese by Google translator, but accuracy is not guaranteed.\n\n"
@@ -298,8 +296,8 @@ if __name__ == "__main__":
                     duration_output = gr.Textbox(label="Duration of each phoneme", placeholder="After you generate a sentence, the detailed information of each phoneme's duration will be presented here.",
                                                 interactive = True)
                     gr.Markdown(
-                        "The number after the : mark represents the length of each phoneme in the generated audio, while the number inside ( ) represents the lenght of spacing between each phoneme and its next phoneme."
-                        "You can manually change the numbers to adjust the length of each phoneme, so that speaking pace can be completely controlled."
+                        "The number after the : mark represents the length of each phoneme in the generated audio, while the number inside ( ) represents the lenght of spacing between each phoneme and its next phoneme. "
+                        "You can manually change the numbers to adjust the length of each phoneme, so that speaking pace can be completely controlled. "
                         "Note that these numbers should be integers only. \n\n(1 represents a length of 0.01161 seconds)\n\n"
                         "音素冒号后的数字代表音素在生成音频中的长度，( )内的数字代表每个音素与下一个音素之间间隔的长度。"
                         "您可以手动修改这些数字来控制每个音素以及间隔的长度，从而完全控制合成音频的说话节奏。"
