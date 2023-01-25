@@ -159,12 +159,12 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w, i
         # convert duration information to string
         duration_info_str = ""
         for i in range(len(char_spacings)):
-            if char_spacings[i] == "spacing":
-                duration_info_str += str(char_spacing_dur_list[i])
+            if i == len(char_spacings) - 1:
+                duration_info_str += "(" + str(char_spacing_dur_list[i]) + ")"
+            elif char_spacings[i] == "spacing":
+                duration_info_str += "(" + str(char_spacing_dur_list[i]) + ")" + ", "
             else:
-                duration_info_str += "{" + char_spacings[i] + ":" + str(char_spacing_dur_list[i]) + "}"
-            if i != len(char_spacings)-1:
-                duration_info_str += ", "
+                duration_info_str += char_spacings[i] + ":" + str(char_spacing_dur_list[i])
         audio = net_g.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale, noise_scale_w=noise_scale_w, length_scale=duration)[0][0,0].data.float().numpy()
     currentDateAndTime = datetime.now()
     print(f"\nCharacter {character} inference successful: {text}")
@@ -178,12 +178,14 @@ def infer_from_phoneme_dur(duration_info_str, character, duration, noise_scale, 
         phonemes = duration_info_str.split(", ")
         recons_durs = []
         recons_phonemes = ""
-        for item in phonemes:
-            if "{" not in item:  # spacing
-                recons_durs.append(int(item))
+        for i, item in enumerate(phonemes):
+            if i == 0:
+                recons_durs.append(int(item.strip("()")))
             else:
-                recons_phonemes += item.strip("{}").split(":")[0]
-                recons_durs.append(int(item.strip("{}").split(":")[1]))
+                phoneme_n_dur, spacing_dur = item.split("(")
+                recons_phonemes += phoneme_n_dur.split(":")[0]
+                recons_durs.append(int(phoneme_n_dur.split(":")[1]))
+                recons_durs.append(int(spacing_dur.strip(")")))
     except ValueError:
         return ("Error: Format must not be changed!", None)
     except AssertionError:
@@ -232,8 +234,8 @@ if __name__ == "__main__":
                     "您可以复制该空间至私人空间运行或打开[Google Colab](https://colab.research.google.com/drive/1J2Vm5dczTF99ckyNLXV0K-hQTxLwEaj5?usp=sharing)在线运行。\n\n"
                     "This model has been integrated to the model collections of [Moe-tts](https://huggingface.co/spaces/skytnt/moe-tts).\n\n"
                     "现已加入[Moe-tts](https://huggingface.co/spaces/skytnt/moe-tts)模型大全。\n\n"
-                    "If you have any suggestions or bug reports, feel free to open discussion in Community.\n\n"
-                    "若有bug反馈或建议，请在Community下开启一个新的Discussion。 \n\n"
+                    "If you have any suggestions or bug reports, feel free to open discussion in [Community](https://huggingface.co/spaces/Plachta/VITS-Umamusume-voice-synthesizer/discussions).\n\n"
+                    "若有bug反馈或建议，请在[Community](https://huggingface.co/spaces/Plachta/VITS-Umamusume-voice-synthesizer/discussions)下开启一个新的Discussion。 \n\n"
                     "If your input language is not Japanese, it will be translated to Japanese by Google translator, but accuracy is not guaranteed.\n\n"
                     "如果您的输入语言不是日语，则会由谷歌翻译自动翻译为日语，但是准确性不能保证。\n\n"
                     )
@@ -296,12 +298,12 @@ if __name__ == "__main__":
                     duration_output = gr.Textbox(label="Duration of each phoneme", placeholder="After you generate a sentence, the detailed information of each phoneme's duration will be presented here.",
                                                 interactive = True)
                     gr.Markdown(
-                        "\{ \}内的数字代表每个音素在生成的音频中的长度，\{ \}外的数字代表音素之间间隔的长度。"
-                        "您可以手动修改这些数字来控制每个音素以及间隔的长度，从而完全控制合成音频的说话节奏。"
-                        "注意这些数字只能是整数。 \n\n(1 代表 0.01161 秒的长度)\n\n"
-                        "The numbers inside \{ \} represent the length for each phoneme in the generated audio, while the numbers out of \{ \} represent the length of spacings between phonemes."
+                        "The number after the : mark represents the length of each phoneme in the generated audio, while the number inside ( ) represents the lenght of spacing between each phoneme and its next phoneme."
                         "You can manually change the numbers to adjust the length of each phoneme, so that speaking pace can be completely controlled."
                         "Note that these numbers should be integers only. \n\n(1 represents a length of 0.01161 seconds)\n\n"
+                        "音素冒号后的数字代表音素在生成音频中的长度，( )内的数字代表每个音素与下一个音素之间间隔的长度。"
+                        "您可以手动修改这些数字来控制每个音素以及间隔的长度，从而完全控制合成音频的说话节奏。"
+                        "注意这些数字只能是整数。 \n\n(1 代表 0.01161 秒的长度)\n\n"
                     )
                 btn.click(infer, inputs=[textbox, char_dropdown, language_dropdown, duration_slider, noise_scale_slider, noise_scale_w_slider, symbol_input], 
                   outputs=[text_output, audio_output, phoneme_output, duration_output])
@@ -324,23 +326,26 @@ if __name__ == "__main__":
         )
         gr.Markdown("# Updates Logs 更新日志：\n\n"
                    "2023/1/24：\n\n"
-                   "增加了对说话节奏的音素级控制。\n\n"
+                   "Improved the format of phoneme length control.\n\n"
+                   "改善了音素控制的格式。\n\n"
+                   "2023/1/24：\n\n"
                    "Added more precise control on pace of speaking by modifying the duration of each phoneme.\n\n"
+                   "增加了对说话节奏的音素级控制。\n\n"
                    "2023/1/13：\n\n"
-                   "增加了音素输入的example（米浴喘气）\n\n"
                    "Added one example of phoneme input.\n\n"
+                   "增加了音素输入的example（米浴喘气）\n\n"
                    "2023/1/12：\n\n"
-                   "增加了音素输入的功能，可以对语气和语调做到一定程度的精细控制。\n\n"
                    "Added phoneme input, which enables more precise control on output audio.\n\n"
-                   "调整了UI的布局。\n\n"
+                   "增加了音素输入的功能，可以对语气和语调做到一定程度的精细控制。\n\n"
                    "Adjusted UI arrangements.\n\n"
+                   "调整了UI的布局。\n\n"
                    "2023/1/10：\n\n"
-                   "数据集已上传，您可以在[这里](https://huggingface.co/datasets/Plachta/Umamusume-voice-text-pairs/tree/main)下载。\n\n"
                    "Dataset used for training is now uploaded to [here](https://huggingface.co/datasets/Plachta/Umamusume-voice-text-pairs/tree/main)\n\n"
+                   "数据集已上传，您可以在[这里](https://huggingface.co/datasets/Plachta/Umamusume-voice-text-pairs/tree/main)下载。\n\n"
                    "2023/1/9：\n\n"
-                   "模型推理已全面转为onnxruntime，现在不会出现Runtime Error: Memory Limit Exceeded了。\n\n"
                    "Model inference has been fully converted to onnxruntime. There will be no more Runtime Error: Memory Limit Exceeded\n\n"
-                   "现已加入[Moe-tts](https://huggingface.co/spaces/skytnt/moe-tts)模型大全。\n\n"
+                   "模型推理已全面转为onnxruntime，现在不会出现Runtime Error: Memory Limit Exceeded了。\n\n"
                    "Now integrated to [Moe-tts](https://huggingface.co/spaces/skytnt/moe-tts) collection.\n\n"
+                   "现已加入[Moe-tts](https://huggingface.co/spaces/skytnt/moe-tts)模型大全。\n\n"
                    )
     app.queue(concurrency_count=3).launch(show_api=False, share=args.share)
