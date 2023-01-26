@@ -101,6 +101,8 @@ def to_symbol_fn(is_symbol_input, input_text, temp_text):
 
 def infer(text_raw, character, language, duration, noise_scale, noise_scale_w, is_symbol):
     # check character & duraction parameter
+    # remove \n
+    text_raw = text_raw.replace("\n", "")
     if language not in languages:
         print("Error: No such language\n")
         return "Error: No such language", None, None, None
