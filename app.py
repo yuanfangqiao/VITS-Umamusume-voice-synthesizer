@@ -75,6 +75,18 @@ def show_memory_info(hint):
     memory = info.rss / 1024.0 / 1024
     print("{} 内存占用: {} MB".format(hint, memory))
 
+def text_to_phoneme(text, symbols, is_symbol):
+  _symbol_to_id = {s: i for i, s in enumerate(symbols)}
+
+  sequence = ""
+  if not is_symbol:
+      clean_text = japanese_cleaners(text)
+  for symbol in clean_text:
+    if symbol not in _symbol_to_id.keys():
+      continue
+    symbol_id = _symbol_to_id[symbol]
+    sequence += symbol
+  return sequence
 
 def get_text(text, hps, is_symbol):
     text_norm = text_to_sequence(text, hps.symbols, [] if is_symbol else hps.data.text_cleaners)
@@ -101,8 +113,6 @@ def to_symbol_fn(is_symbol_input, input_text, temp_text):
 
 def infer(text_raw, character, language, duration, noise_scale, noise_scale_w, is_symbol):
     # check character & duraction parameter
-    # remove \n
-    text_raw = text_raw.replace("\n", "")
     if language not in languages:
         print("Error: No such language\n")
         return "Error: No such language", None, None, None
@@ -136,10 +146,7 @@ def infer(text_raw, character, language, duration, noise_scale, noise_scale_w, i
         x_tst_lengths = torch.LongTensor([stn_tst.size(0)])
         sid = torch.LongTensor([char_id])
         try:
-            if not is_symbol:
-                jp2phoneme = japanese_cleaners(text)
-            else:
-                jp2phoneme = text
+            jp2phoneme = text_to_phoneme(text, hps.symbols, is_symbol)
             durations = net_g.predict_duration(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale,
                                                noise_scale_w=noise_scale_w, length_scale=duration)
             char_dur_list = []
