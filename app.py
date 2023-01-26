@@ -81,6 +81,8 @@ def text_to_phoneme(text, symbols, is_symbol):
   sequence = ""
   if not is_symbol:
       clean_text = japanese_cleaners(text)
+  else:
+      clean_text = text
   for symbol in clean_text:
     if symbol not in _symbol_to_id.keys():
       continue
