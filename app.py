@@ -262,9 +262,9 @@ if __name__ == "__main__":
                 symbol_input.change(to_symbol_fn,
                                     [symbol_input, textbox, temp_text_var],
                                     [textbox, temp_text_var])
-                symbol_list.click(None, [symbol_list, symbol_list_json], [],
+                symbol_list.click(None, [symbol_list, symbol_list_json], textbox,
                                   _js=f"""
-                (i, symbols) => {{
+                (i, symbols, text) => {{
                     let root = document.querySelector("body > gradio-app");
                     if (root.shadowRoot != null)
                         root = root.shadowRoot;
@@ -280,7 +280,10 @@ if __name__ == "__main__":
                     text_input.selectionEnd = startPos + symbols[i].length;
                     text_input.blur();
                     window.scrollTo(x, y);
-                    return [];
+
+                    text = text_input.value;
+                    
+                    return text;
                 }}""")
                 # select character
                 char_dropdown = gr.Dropdown(choices=characters, value = "0:特别周", label='character')
