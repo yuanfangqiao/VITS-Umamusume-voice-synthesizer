@@ -127,7 +127,7 @@ models_info = [
         "config_path": "./configs/uma_trilingual.json",
         "examples": [['你好，训练员先生，很高兴见到你。', '草上飞 Grass Wonder (Umamusume Pretty Derby)', '简体中文', 1, False],
                         ['To be honest, I have no idea what to say as examples.', '派蒙 Paimon (Genshin Impact)', 'English', 1, False],
-                        ['授業中に出しだら，学校生活終わるですわ。', '綾地 寧々 Ayachi Nene (Sanoba Witch)', '日本語', 1, False]]
+                        ['授業中に出しだら，学校生活終わるですわ。', '綾地 寧々 Ayachi Nene (Sanoba Witch)', '日本語', 1, False]],
         "type": "torch"
     }
 ]
