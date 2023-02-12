@@ -50,8 +50,7 @@
     "use_spectral_norm": false,
     "gin_channels": 256
   },
-  "speakers": [
-    "特别周 Special Week (Umamusume Pretty Derby)": 0,
+  "speakers": {"特别周 Special Week (Umamusume Pretty Derby)": 0,
     "无声铃鹿 Silence Suzuka (Umamusume Pretty Derby)": 1,
     "东海帝王 Tokai Teio (Umamusume Pretty Derby)": 2,
     "丸善斯基 Maruzensky (Umamusume Pretty Derby)": 3,
@@ -128,7 +127,7 @@
     "骏川手纲 Hayakawa Tazuna (Umamusume Pretty Derby)": 81,
     "小林历奇 Kopano Rickey (Umamusume Pretty Derby)": 83,
     "奇锐骏 Wonder Acute (Umamusume Pretty Derby)": 85,
-    "秋川理事长 President Akikawa (Umamusume Pretty Derby)": 86,
-],
+    "秋川理事长 President Akikawa (Umamusume Pretty Derby)": 86
+  },
   "symbols": ["_", ",", ".", "!", "?", "-", "A", "E", "I", "N", "O", "Q", "U", "a", "b", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "y", "z", "\u0283", "\u02a7", "\u2193", "\u2191", " "]
 }
