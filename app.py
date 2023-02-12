@@ -14,39 +14,22 @@ import utils
 import gradio as gr
 import gradio.utils as gr_utils
 import gradio.processing_utils as gr_processing_utils
-from ONNXVITS_infer import SynthesizerTrn
+import ONNXVITS_infer
+import models
 from text import text_to_sequence, _clean_text
 from text.symbols import symbols
 from mel_processing import spectrogram_torch
 import psutil
 from datetime import datetime
 
-def audio_postprocess(self, y):
-    if y is None:
-        return None
-
-    if gr_utils.validate_url(y):
-        file = gr_processing_utils.download_to_file(y, dir=self.temp_dir)
-    elif isinstance(y, tuple):
-        sample_rate, data = y
-        file = tempfile.NamedTemporaryFile(
-            suffix=".wav", dir=self.temp_dir, delete=False
-        )
-        gr_processing_utils.audio_to_file(sample_rate, data, file.name)
-    else:
-        file = gr_processing_utils.create_tmp_copy_of_file(y, dir=self.temp_dir)
-
-    return gr_processing_utils.encode_url_or_file_to_base64(file.name)
-
 
 language_marks = {
+    "Japanese": "",
     "日本語": "[JA]",
     "简体中文": "[ZH]",
     "English": "[EN]",
     "Mix": "",
 }
-
-gr.Audio.postprocess = audio_postprocess
 
 limitation = os.getenv("SYSTEM") == "spaces"  # limit text and audio length in huggingface spaces
 def create_tts_fn(model, hps, speaker_ids):
@@ -94,10 +77,10 @@ def create_vc_fn(model, hps, speaker_ids):
             y = y.unsqueeze(0)
             spec = spectrogram_torch(y, hps.data.filter_length,
                                      hps.data.sampling_rate, hps.data.hop_length, hps.data.win_length,
-                                     center=False).to(device)
-            spec_lengths = LongTensor([spec.size(-1)]).to(device)
-            sid_src = LongTensor([original_speaker_id]).to(device)
-            sid_tgt = LongTensor([target_speaker_id]).to(device)
+                                     center=False)
+            spec_lengths = LongTensor([spec.size(-1)])
+            sid_src = LongTensor([original_speaker_id])
+            sid_tgt = LongTensor([target_speaker_id])
             audio = model.voice_conversion(spec, spec_lengths, sid_src=sid_src, sid_tgt=sid_tgt)[0][
                 0, 0].data.cpu().float().numpy()
         del y, spec, spec_lengths, sid_src, sid_tgt
@@ -119,30 +102,12 @@ def create_to_symbol_fn(hps):
 
     return to_symbol_fn
 
-download_audio_js = """
-() =>{{
-    let root = document.querySelector("body > gradio-app");
-    if (root.shadowRoot != null)
-        root = root.shadowRoot;
-    let audio = root.querySelector("#{audio_id}").querySelector("audio");
-    if (audio == undefined)
-        return;
-    audio = audio.src;
-    let oA = document.createElement("a");
-    oA.download = Math.floor(Math.random()*100000000)+'.wav';
-    oA.href = audio;
-    document.body.appendChild(oA);
-    oA.click();
-    oA.remove();
-}}
-"""
-
 models_tts = []
 models_vc = []
 models_info = [
     {
         "title": "Japanese",
-        "languages": ["日本語"],
+        "languages": ["Japanese"],
         "description": "",
         "model_path": "./pretrained_models/G_1153000.pth",
         "config_path": "./configs/uma87.json",
@@ -151,10 +116,11 @@ models_info = [
                         ['何でこんなに慣れでんのよ，私のほが先に好きだっだのに。', 'Grass Wonder', '日本語', 1, False],
                         ['授業中に出しだら，学校生活終わるですわ。', 'Mejiro Mcqueen', '日本語', 1, False],
                         ['お帰りなさい，お兄様！', 'Rice Shower', '日本語', 1, False],
-                        ['私の処女をもらっでください！', 'Rice Shower', '日本語', 1, False]]
+                        ['私の処女をもらっでください！', 'Rice Shower', '日本語', 1, False]],
+        "type": "onnx"
     },
     {
-        "title": "Japanese",
+        "title": "Trilingual",
         "languages": ['日本語', '简体中文', 'English', 'Mix'],
         "description": "",
         "model_path": "./pretrained_models/G_1396000.pth",
@@ -162,6 +128,7 @@ models_info = [
         "examples": [['你好，训练员先生，很高兴见到你。', '草上飞 Grass Wonder (Umamusume Pretty Derby)', '简体中文', 1, False],
                         ['To be honest, I have no idea what to say as examples.', '派蒙 Paimon (Genshin Impact)', 'English', 1, False],
                         ['授業中に出しだら，学校生活終わるですわ。', '綾地 寧々 Ayachi Nene (Sanoba Witch)', '日本語', 1, False]]
+        "type": "torch"
     }
 ]
 
@@ -177,18 +144,27 @@ if __name__ == "__main__":
         examples = info['examples']
         config_path = info['config_path']
         model_path = info['model_path']
+        type = info['type']
         hps = utils.get_hparams_from_file(config_path)
-        model = SynthesizerTrn(
-            len(hps.symbols),
-            hps.data.filter_length // 2 + 1,
-            hps.train.segment_size // hps.data.hop_length,
-            n_speakers=hps.data.n_speakers,
-            **hps.model)
+        if type == "onnx":
+            model = ONNXVITS_infer.SynthesizerTrn(
+                len(hps.symbols),
+                hps.data.filter_length // 2 + 1,
+                hps.train.segment_size // hps.data.hop_length,
+                n_speakers=hps.data.n_speakers,
+                **hps.model)
+        else:
+            model = models.SynthesizerTrn(
+                len(hps.symbols),
+                hps.data.filter_length // 2 + 1,
+                hps.train.segment_size // hps.data.hop_length,
+                n_speakers=hps.data.n_speakers,
+                **hps.model)
         utils.load_checkpoint(model_path, model, None)
         model.eval()
         speaker_ids = hps.speakers
         speakers = list(hps.speakers.keys())
-        models_tts.append((name, speakers, lang, example,
+        models_tts.append((name, speakers, lang, examples,
                            hps.symbols, create_tts_fn(model, hps, speaker_ids),
                            create_to_symbol_fn(hps)))
         models_vc.append((name, speakers, create_vc_fn(model, hps, speaker_ids)))
@@ -250,10 +226,8 @@ if __name__ == "__main__":
                                     audio_output = gr.Audio(label="Output Audio", elem_id="tts-audio")
                                     btn = gr.Button("Generate!")
                                     
-                                    download = gr.Button("Download Audio")
-                                    download.click(None, [], [], _js=download_audio_js.format(audio_id="tts-audio"))
                                     if len(lang) == 1:
-                                        btn.click(tts_fn, inputs=[textbox, char_dropdown, None, duration_slider, symbol_input], 
+                                        btn.click(tts_fn, inputs=[textbox, char_dropdown, language_dropdown, duration_slider, symbol_input], 
                                               outputs=[text_output, audio_output])
                                     else:
                                         btn.click(tts_fn, inputs=[textbox, char_dropdown, language_dropdown, duration_slider, symbol_input], 
