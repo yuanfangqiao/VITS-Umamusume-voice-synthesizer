@@ -111,12 +111,12 @@ models_info = [
         "description": "",
         "model_path": "./pretrained_models/G_1153000.pth",
         "config_path": "./configs/uma87.json",
-        "examples": [['お疲れ様です，トレーナーさん。', 'Silence Suzuka', '日本語', 1, False],
-                        ['張り切っていこう！', 'Kitasan Black', '日本語', 1, False],
-                        ['何でこんなに慣れでんのよ，私のほが先に好きだっだのに。', 'Grass Wonder', '日本語', 1, False],
-                        ['授業中に出しだら，学校生活終わるですわ。', 'Mejiro Mcqueen', '日本語', 1, False],
-                        ['お帰りなさい，お兄様！', 'Rice Shower', '日本語', 1, False],
-                        ['私の処女をもらっでください！', 'Rice Shower', '日本語', 1, False]],
+        "examples": [['お疲れ様です，トレーナーさん。', '无声铃鹿 Silence Suzuka (Umamusume Pretty Derby)', 'Japanese', 1, False],
+                        ['張り切っていこう！', '北部玄驹 Kitasan Black (Umamusume Pretty Derby)', 'Japanese', 1, False],
+                        ['何でこんなに慣れでんのよ，私のほが先に好きだっだのに。', '草上飞 Grass Wonder (Umamusume Pretty Derby)', 'Japanese', 1, False],
+                        ['授業中に出しだら，学校生活終わるですわ。', '目白麦昆 Mejiro Mcqueen (Umamusume Pretty Derby)', 'Japanese', 1, False],
+                        ['お帰りなさい，お兄様！', '米浴 Rice Shower (Umamusume Pretty Derby)', 'Japanese', 1, False],
+                        ['私の処女をもらっでください！', '米浴 Rice Shower (Umamusume Pretty Derby)', 'Japanese', 1, False]],
         "type": "onnx"
     },
     {
