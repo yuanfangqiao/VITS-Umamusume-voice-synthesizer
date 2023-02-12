@@ -22,4 +22,7 @@ ko_pron
 indic_transliteration
 num_thai
 opencc
+onnx
+onnxruntime
+psutil
 gradio
