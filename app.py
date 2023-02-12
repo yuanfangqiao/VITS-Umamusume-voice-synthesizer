@@ -4,6 +4,7 @@ import os
 import re
 import tempfile
 import logging
+
 logging.getLogger('numba').setLevel(logging.WARNING)
 import librosa
 import numpy as np
@@ -22,7 +23,6 @@ from mel_processing import spectrogram_torch
 import psutil
 from datetime import datetime
 
-
 language_marks = {
     "Japanese": "",
     "日本語": "[JA]",
@@ -32,6 +32,8 @@ language_marks = {
 }
 
 limitation = os.getenv("SYSTEM") == "spaces"  # limit text and audio length in huggingface spaces
+
+
 def create_tts_fn(model, hps, speaker_ids):
     def tts_fn(text, speaker, language, speed, is_symbol):
         if limitation:
@@ -55,6 +57,7 @@ def create_tts_fn(model, hps, speaker_ids):
         return "Success", (hps.data.sampling_rate, audio)
 
     return tts_fn
+
 
 def create_vc_fn(model, hps, speaker_ids):
     def vc_fn(original_speaker, target_speaker, input_audio):
@@ -88,12 +91,14 @@ def create_vc_fn(model, hps, speaker_ids):
 
     return vc_fn
 
+
 def get_text(text, hps, is_symbol):
     text_norm = text_to_sequence(text, hps.symbols, [] if is_symbol else hps.data.text_cleaners)
     if hps.data.add_blank:
         text_norm = commons.intersperse(text_norm, 0)
     text_norm = LongTensor(text_norm)
     return text_norm
+
 
 def create_to_symbol_fn(hps):
     def to_symbol_fn(is_symbol_input, input_text, temp_text):
@@ -102,37 +107,50 @@ def create_to_symbol_fn(hps):
 
     return to_symbol_fn
 
+
 models_tts = []
 models_vc = []
 models_info = [
     {
-        "title": "Japanese",
-        "languages": ["Japanese"],
-        "description": "",
-        "model_path": "./pretrained_models/G_1153000.pth",
-        "config_path": "./configs/uma87.json",
-        "examples": [['お疲れ様です，トレーナーさん。', '无声铃鹿 Silence Suzuka (Umamusume Pretty Derby)', 'Japanese', 1, False],
-                        ['張り切っていこう！', '北部玄驹 Kitasan Black (Umamusume Pretty Derby)', 'Japanese', 1, False],
-                        ['何でこんなに慣れでんのよ，私のほが先に好きだっだのに。', '草上飞 Grass Wonder (Umamusume Pretty Derby)', 'Japanese', 1, False],
-                        ['授業中に出しだら，学校生活終わるですわ。', '目白麦昆 Mejiro Mcqueen (Umamusume Pretty Derby)', 'Japanese', 1, False],
-                        ['お帰りなさい，お兄様！', '米浴 Rice Shower (Umamusume Pretty Derby)', 'Japanese', 1, False],
-                        ['私の処女をもらっでください！', '米浴 Rice Shower (Umamusume Pretty Derby)', 'Japanese', 1, False]],
-        "type": "onnx"
-    },
-    {
         "title": "Trilingual",
         "languages": ['日本語', '简体中文', 'English', 'Mix'],
-        "description": "",
+        "description": """
+    This model is trained on a mix up of Umamusume, Genshin Impact, Sanoba Witch & VCTK voice data to learn multilanguage.
+    All characters can speak English, Chinese & Japanese.\n\n
+    To mix multiple languages in a single sentence, wrap the corresponding part with language tokens
+     ([JA] for Japanese, [ZH] for Chinese, [EN] for English), as shown in the examples.\n\n
+    这个模型在赛马娘，原神，魔女的夜宴以及VCTK数据集上混合训练以学习多种语言。
+    所有角色均可说中日英三语。\n\n
+    若需要在同一个句子中混合多种语言，使用相应的语言标记包裹句子。
+    （日语用[JA], 中文用[ZH], 英文用[EN]），参考Examples中的示例。
+    """,
         "model_path": "./pretrained_models/G_1396000.pth",
         "config_path": "./configs/uma_trilingual.json",
         "examples": [['你好，训练员先生，很高兴见到你。', '草上飞 Grass Wonder (Umamusume Pretty Derby)', '简体中文', 1, False],
-                        ['To be honest, I have no idea what to say as examples.', '派蒙 Paimon (Genshin Impact)', 'English', 1, False],
-                        ['授業中に出しだら，学校生活終わるですわ。', '綾地 寧々 Ayachi Nene (Sanoba Witch)', '日本語', 1, False]],
+                     ['To be honest, I have no idea what to say as examples.', '派蒙 Paimon (Genshin Impact)', 'English',
+                      1, False],
+                     ['授業中に出しだら，学校生活終わるですわ。', '綾地 寧々 Ayachi Nene (Sanoba Witch)', '日本語', 1, False],
+                     ['[JA]こんにちわ。[JA][ZH]你好！[ZH][EN]Hello![EN]', '綾地 寧々 Ayachi Nene (Sanoba Witch)', 'Mix', 1, False]],
         "type": "torch"
-    }
+    },
+    {
+        "title": "Japanese",
+        "languages": ["Japanese"],
+        "description": """
+                       This model contains 87 characters from Umamusume: Pretty Derby, Japanese only.\n\n
+                       这个模型包含赛马娘的所有87名角色，只能合成日语。
+                       """,
+        "model_path": "./pretrained_models/G_1153000.pth",
+        "config_path": "./configs/uma87.json",
+        "examples": [['お疲れ様です，トレーナーさん。', '无声铃鹿 Silence Suzuka (Umamusume Pretty Derby)', 'Japanese', 1, False],
+                     ['張り切っていこう！', '北部玄驹 Kitasan Black (Umamusume Pretty Derby)', 'Japanese', 1, False],
+                     ['何でこんなに慣れでんのよ，私のほが先に好きだっだのに。', '草上飞 Grass Wonder (Umamusume Pretty Derby)', 'Japanese', 1, False],
+                     ['授業中に出しだら，学校生活終わるですわ。', '目白麦昆 Mejiro Mcqueen (Umamusume Pretty Derby)', 'Japanese', 1, False],
+                     ['お帰りなさい，お兄様！', '米浴 Rice Shower (Umamusume Pretty Derby)', 'Japanese', 1, False],
+                     ['私の処女をもらっでください！', '米浴 Rice Shower (Umamusume Pretty Derby)', 'Japanese', 1, False]],
+        "type": "onnx"
+    },
 ]
-
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -145,6 +163,7 @@ if __name__ == "__main__":
         config_path = info['config_path']
         model_path = info['model_path']
         type = info['type']
+        description = info['description']
         hps = utils.get_hparams_from_file(config_path)
         if type == "onnx":
             model = ONNXVITS_infer.SynthesizerTrn(
@@ -164,26 +183,30 @@ if __name__ == "__main__":
         model.eval()
         speaker_ids = hps.speakers
         speakers = list(hps.speakers.keys())
-        models_tts.append((name, speakers, lang, examples,
+        models_tts.append((name, description, speakers, lang, examples,
                            hps.symbols, create_tts_fn(model, hps, speaker_ids),
                            create_to_symbol_fn(hps)))
-        models_vc.append((name, speakers, create_vc_fn(model, hps, speaker_ids)))
+        models_vc.append((name, description, speakers, create_vc_fn(model, hps, speaker_ids)))
     app = gr.Blocks()
     with app:
         gr.Markdown("# English & Chinese & Japanese Anime TTS\n\n"
                     "![visitor badge](https://visitor-badge.glitch.me/badge?page_id=Plachta.VITS-Umamusume-voice-synthesizer)\n\n"
-                    "Including Japanese TTS & Trilingual TTS, speakers are all anime characters. 包含一个纯日语TTS和一个中日英三语TTS模型，主要为二次元角色。"
+                    "Including Japanese TTS & Trilingual TTS, speakers are all anime characters. \n\n包含一个纯日语TTS和一个中日英三语TTS模型，主要为二次元角色。\n\n"
                     "If you have any suggestions or bug reports, feel free to open discussion in [Community](https://huggingface.co/spaces/Plachta/VITS-Umamusume-voice-synthesizer/discussions).\n\n"
                     "若有bug反馈或建议，请在[Community](https://huggingface.co/spaces/Plachta/VITS-Umamusume-voice-synthesizer/discussions)下开启一个新的Discussion。 \n\n"
                     )
         with gr.Tabs():
             with gr.TabItem("TTS"):
                 with gr.Tabs():
-                    for i, (name, speakers, lang, example, symbols, tts_fn, to_symbol_fn) in enumerate(models_tts):
+                    for i, (name, description, speakers, lang, example, symbols, tts_fn, to_symbol_fn) in enumerate(
+                            models_tts):
                         with gr.TabItem(name):
+                            gr.Markdown(description)
                             with gr.Row():
                                 with gr.Column():
-                                    textbox = gr.TextArea(label="Text", placeholder="Type your sentence here (Maximum 150 words)", value="こんにちわ。", elem_id=f"tts-input")
+                                    textbox = gr.TextArea(label="Text",
+                                                          placeholder="Type your sentence here (Maximum 150 words)",
+                                                          value="こんにちわ。", elem_id=f"tts-input")
                                     with gr.Accordion(label="Phoneme Input", open=False):
                                         temp_text_var = gr.Variable()
                                         symbol_input = gr.Checkbox(value=False, label="Symbol input")
@@ -212,21 +235,24 @@ if __name__ == "__main__":
                                         text_input.selectionEnd = startPos + symbols[i].length;
                                         text_input.blur();
                                         window.scrollTo(x, y);
-                    
+
                                         text = text_input.value;
-                                        
+
                                         return text;
                                     }}""")
                                     # select character
                                     char_dropdown = gr.Dropdown(choices=speakers, value=speakers[0], label='character')
                                     language_dropdown = gr.Dropdown(choices=lang, value=lang[0], label='language')
-                                    duration_slider = gr.Slider(minimum=0.1, maximum=5, value=1, step=0.1, label='速度 Speed')
+                                    duration_slider = gr.Slider(minimum=0.1, maximum=5, value=1, step=0.1,
+                                                                label='速度 Speed')
                                 with gr.Column():
                                     text_output = gr.Textbox(label="Message")
                                     audio_output = gr.Audio(label="Output Audio", elem_id="tts-audio")
                                     btn = gr.Button("Generate!")
-                                    btn.click(tts_fn, inputs=[textbox, char_dropdown, language_dropdown, duration_slider, symbol_input], 
-                                          outputs=[text_output, audio_output])
+                                    btn.click(tts_fn,
+                                              inputs=[textbox, char_dropdown, language_dropdown, duration_slider,
+                                                      symbol_input],
+                                              outputs=[text_output, audio_output])
                             gr.Examples(
                                 examples=example,
                                 inputs=[textbox, char_dropdown, language_dropdown,
