@@ -20,7 +20,6 @@ import models
 from text import text_to_sequence, _clean_text
 from text.symbols import symbols
 from mel_processing import spectrogram_torch
-import psutil
 from datetime import datetime
 
 language_marks = {
