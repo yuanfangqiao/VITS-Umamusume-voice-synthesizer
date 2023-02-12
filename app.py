@@ -63,9 +63,9 @@ def create_tts_fn(model, hps, speaker_ids):
         speaker_id = speaker_ids[speaker]
         stn_tst = get_text(text, hps, is_symbol)
         with no_grad():
-            x_tst = stn_tst.unsqueeze(0).to(device)
-            x_tst_lengths = LongTensor([stn_tst.size(0)]).to(device)
-            sid = LongTensor([speaker_id]).to(device)
+            x_tst = stn_tst.unsqueeze(0)
+            x_tst_lengths = LongTensor([stn_tst.size(0)])
+            sid = LongTensor([speaker_id])
             audio = model.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=.667, noise_scale_w=0.8,
                                 length_scale=1.0 / speed)[0][0, 0].data.cpu().float().numpy()
         del stn_tst, x_tst, x_tst_lengths, sid
