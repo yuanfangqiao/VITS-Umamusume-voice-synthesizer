@@ -220,18 +220,13 @@ if __name__ == "__main__":
                                     # select character
                                     char_dropdown = gr.Dropdown(choices=speakers, value=speakers[0], label='character')
                                     language_dropdown = gr.Dropdown(choices=lang, value=lang[0], label='language')
-                                    duration_slider = gr.Slider(minimum=0.1, maximum=5, value=1, step=0.1, label='时长 Duration')
+                                    duration_slider = gr.Slider(minimum=0.1, maximum=5, value=1, step=0.1, label='速度 Speed')
                                 with gr.Column():
                                     text_output = gr.Textbox(label="Message")
                                     audio_output = gr.Audio(label="Output Audio", elem_id="tts-audio")
                                     btn = gr.Button("Generate!")
-                                    
-                                    if len(lang) == 1:
-                                        btn.click(tts_fn, inputs=[textbox, char_dropdown, language_dropdown, duration_slider, symbol_input], 
-                                              outputs=[text_output, audio_output])
-                                    else:
-                                        btn.click(tts_fn, inputs=[textbox, char_dropdown, language_dropdown, duration_slider, symbol_input], 
-                                              outputs=[text_output, audio_output])
+                                    btn.click(tts_fn, inputs=[textbox, char_dropdown, language_dropdown, duration_slider, symbol_input], 
+                                          outputs=[text_output, audio_output])
                             gr.Examples(
                                 examples=example,
                                 inputs=[textbox, char_dropdown, language_dropdown,
