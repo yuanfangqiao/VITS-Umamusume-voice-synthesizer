@@ -142,7 +142,7 @@ models_vc = []
 models_info = [
     {
         "title": "Japanese",
-        "langugages": ["日本語"],
+        "languages": ["日本語"],
         "description": "",
         "model_path": "./pretrained_models/G_1153000.pth",
         "config_path": "./configs/uma87.json"
@@ -155,7 +155,7 @@ models_info = [
     },
     {
         "title": "Japanese",
-        "langugages": ['日本語', '简体中文', 'English', 'Mix'],
+        "languages": ['日本語', '简体中文', 'English', 'Mix'],
         "description": "",
         "model_path": "./pretrained_models/G_1396000.pth",
         "config_path": "./configs/uma_trilingual.json"
