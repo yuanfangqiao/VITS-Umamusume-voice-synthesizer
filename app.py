@@ -145,7 +145,7 @@ models_info = [
         "languages": ["日本語"],
         "description": "",
         "model_path": "./pretrained_models/G_1153000.pth",
-        "config_path": "./configs/uma87.json"
+        "config_path": "./configs/uma87.json",
         "examples": [['お疲れ様です，トレーナーさん。', 'Silence Suzuka', '日本語', 1, False],
                         ['張り切っていこう！', 'Kitasan Black', '日本語', 1, False],
                         ['何でこんなに慣れでんのよ，私のほが先に好きだっだのに。', 'Grass Wonder', '日本語', 1, False],
@@ -158,7 +158,7 @@ models_info = [
         "languages": ['日本語', '简体中文', 'English', 'Mix'],
         "description": "",
         "model_path": "./pretrained_models/G_1396000.pth",
-        "config_path": "./configs/uma_trilingual.json"
+        "config_path": "./configs/uma_trilingual.json",
         "examples": [['你好，训练员先生，很高兴见到你。', '草上飞 Grass Wonder (Umamusume Pretty Derby)', '简体中文', 1, False],
                         ['To be honest, I have no idea what to say as examples.', '派蒙 Paimon (Genshin Impact)', 'English', 1, False],
                         ['授業中に出しだら，学校生活終わるですわ。', '綾地 寧々 Ayachi Nene (Sanoba Witch)', '日本語', 1, False]]
@@ -204,7 +204,7 @@ if __name__ == "__main__":
             with gr.TabItem("TTS"):
                 with gr.Tabs():
                     for i, (name, speakers, lang, example, symbols, tts_fn, to_symbol_fn) in enumerate(models_tts):
-                        with gr.TabItem(name)
+                        with gr.TabItem(name):
                             with gr.Row():
                                 with gr.Column():
                                     textbox = gr.TextArea(label="Text", placeholder="Type your sentence here (Maximum 150 words)", value="こんにちわ。", elem_id=f"tts-input")
