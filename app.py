@@ -20,7 +20,6 @@ import models
 from text import text_to_sequence, _clean_text
 from text.symbols import symbols
 from mel_processing import spectrogram_torch
-from datetime import datetime
 
 language_marks = {
     "Japanese": "",
@@ -136,8 +135,8 @@ models_info = [
         "title": "Japanese",
         "languages": ["Japanese"],
         "description": """
-                       This model contains 87 characters from Umamusume: Pretty Derby, Japanese only.\n\n
-                       这个模型包含赛马娘的所有87名角色，只能合成日语。
+                       This model contains 87 characters from Umamusume: Pretty Derby, Japanese only but with higher quality.\n\n
+                       这个模型包含赛马娘的所有87名角色，只能合成日语，但效果比混合语言模型更好。
                        """,
         "model_path": "./pretrained_models/G_1153000.pth",
         "config_path": "./configs/uma87.json",
