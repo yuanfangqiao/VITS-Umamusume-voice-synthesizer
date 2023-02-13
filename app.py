@@ -20,6 +20,8 @@ import models
 from text import text_to_sequence, _clean_text
 from text.symbols import symbols
 from mel_processing import spectrogram_torch
+import psutil
+from datetime import datetime
 
 language_marks = {
     "Japanese": "",
@@ -122,23 +124,23 @@ models_info = [
     若需要在同一个句子中混合多种语言，使用相应的语言标记包裹句子。
     （日语用[JA], 中文用[ZH], 英文用[EN]），参考Examples中的示例。
     """,
-        "model_path": "./pretrained_models/G_1396000.pth",
+        "model_path": "./pretrained_models/G_trilingual.pth",
         "config_path": "./configs/uma_trilingual.json",
         "examples": [['你好，训练员先生，很高兴见到你。', '草上飞 Grass Wonder (Umamusume Pretty Derby)', '简体中文', 1, False],
                      ['To be honest, I have no idea what to say as examples.', '派蒙 Paimon (Genshin Impact)', 'English',
                       1, False],
                      ['授業中に出しだら，学校生活終わるですわ。', '綾地 寧々 Ayachi Nene (Sanoba Witch)', '日本語', 1, False],
                      ['[JA]こんにちわ。[JA][ZH]你好！[ZH][EN]Hello![EN]', '綾地 寧々 Ayachi Nene (Sanoba Witch)', 'Mix', 1, False]],
-        "type": "torch"
+        "onnx_dir": "./ONNX_net/G_trilingual/"
     },
     {
         "title": "Japanese",
         "languages": ["Japanese"],
         "description": """
-                       This model contains 87 characters from Umamusume: Pretty Derby, Japanese only but with higher quality.\n\n
-                       这个模型包含赛马娘的所有87名角色，只能合成日语，但效果比混合语言模型更好。
+                       This model contains 87 characters from Umamusume: Pretty Derby, Japanese only.\n\n
+                       这个模型包含赛马娘的所有87名角色，只能合成日语。
                        """,
-        "model_path": "./pretrained_models/G_1153000.pth",
+        "model_path": "./pretrained_models/G_jp.pth",
         "config_path": "./configs/uma87.json",
         "examples": [['お疲れ様です，トレーナーさん。', '无声铃鹿 Silence Suzuka (Umamusume Pretty Derby)', 'Japanese', 1, False],
                      ['張り切っていこう！', '北部玄驹 Kitasan Black (Umamusume Pretty Derby)', 'Japanese', 1, False],
@@ -146,7 +148,7 @@ models_info = [
                      ['授業中に出しだら，学校生活終わるですわ。', '目白麦昆 Mejiro Mcqueen (Umamusume Pretty Derby)', 'Japanese', 1, False],
                      ['お帰りなさい，お兄様！', '米浴 Rice Shower (Umamusume Pretty Derby)', 'Japanese', 1, False],
                      ['私の処女をもらっでください！', '米浴 Rice Shower (Umamusume Pretty Derby)', 'Japanese', 1, False]],
-        "type": "onnx"
+        "onnx_dir": "./ONNX_net/G_jp/"
     },
 ]
 
@@ -160,23 +162,16 @@ if __name__ == "__main__":
         examples = info['examples']
         config_path = info['config_path']
         model_path = info['model_path']
-        type = info['type']
         description = info['description']
+        onnx_dir = info["onnx_dir"]
         hps = utils.get_hparams_from_file(config_path)
-        if type == "onnx":
-            model = ONNXVITS_infer.SynthesizerTrn(
-                len(hps.symbols),
-                hps.data.filter_length // 2 + 1,
-                hps.train.segment_size // hps.data.hop_length,
-                n_speakers=hps.data.n_speakers,
-                **hps.model)
-        else:
-            model = models.SynthesizerTrn(
-                len(hps.symbols),
-                hps.data.filter_length // 2 + 1,
-                hps.train.segment_size // hps.data.hop_length,
-                n_speakers=hps.data.n_speakers,
-                **hps.model)
+        model = ONNXVITS_infer.SynthesizerTrn(
+            len(hps.symbols),
+            hps.data.filter_length // 2 + 1,
+            hps.train.segment_size // hps.data.hop_length,
+            n_speakers=hps.data.n_speakers,
+            ONNX_dir=onnx_dir,
+            **hps.model)
         utils.load_checkpoint(model_path, model, None)
         model.eval()
         speaker_ids = hps.speakers
