@@ -1,6 +1,6 @@
 ---
-title: Umamusume-VITS-TTS
-emoji: 🐴
+title: Multilingual Anime TTS
+emoji: 🎙🐴
 colorFrom: green
 colorTo: gray
 sdk: gradio
