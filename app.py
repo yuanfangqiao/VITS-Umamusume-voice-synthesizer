@@ -242,6 +242,7 @@ if __name__ == "__main__":
                                     text_output = gr.Textbox(label="Message")
                                     audio_output = gr.Audio(label="Output Audio", elem_id="tts-audio")
                                     btn = gr.Button("Generate!")
+                                    print("------textbox:",textbox)
                                     btn.click(tts_fn,
                                               inputs=[textbox, char_dropdown, language_dropdown, duration_slider,
                                                       symbol_input],
@@ -253,4 +254,4 @@ if __name__ == "__main__":
                                 outputs=[text_output, audio_output],
                                 fn=tts_fn
                             )
-    app.queue(concurrency_count=3).launch(show_api=False, share=args.share)
+    app.queue(concurrency_count=3).launch(show_api=True, share=args.share, server_name="0.0.0.0")
