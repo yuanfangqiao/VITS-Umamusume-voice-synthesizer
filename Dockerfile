@@ -1,3 +1,4 @@
+# usage: docker build -t registry.cn-shenzhen.aliyuncs.com/yuanfangqiao/vits:0.2 .
 FROM yuanfangqiao/ubuntu-python38:0.3
 
 
